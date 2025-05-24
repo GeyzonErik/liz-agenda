@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -104,7 +105,7 @@
   }
   
   .appointment-pending {
-    @apply bg-yellow-50 border-l-yellow-500 hover:bg-yellow-100;
+    @apply bg-blue-50 border-l-agendei-teal hover:bg-blue-100;
   }
   
   .appointment-cancelled {
