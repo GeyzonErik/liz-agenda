@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ViewMode, Appointment, CalendarDay } from '@/types/appointment';
 import { AppointmentCard } from './AppointmentCard';
@@ -8,13 +7,15 @@ interface CalendarViewProps {
   currentDate: Date;
   appointments: Appointment[];
   onAppointmentClick: (appointment: Appointment) => void;
+  onAppointmentMove?: (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => void;
 }
 
 export const CalendarView = ({
   viewMode,
   currentDate,
   appointments,
-  onAppointmentClick
+  onAppointmentClick,
+  onAppointmentMove
 }: CalendarViewProps) => {
   const [draggedAppointment, setDraggedAppointment] = useState<Appointment | null>(null);
 
@@ -80,7 +81,59 @@ export const CalendarView = ({
     }).sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
   };
 
+  const handleDrop = (e: React.DragEvent, targetDate: Date, timeSlot?: string) => {
+    e.preventDefault();
+    const appointmentData = e.dataTransfer.getData('appointment');
+    if (!appointmentData || !onAppointmentMove) return;
+
+    const appointment: Appointment = JSON.parse(appointmentData);
+    const originalStart = new Date(appointment.start_time);
+    const originalEnd = new Date(appointment.end_time);
+    const duration = originalEnd.getTime() - originalStart.getTime();
+
+    let newStartTime: string;
+    let newEndTime: string;
+
+    if (timeSlot) {
+      const [hours, minutes] = timeSlot.split(':').map(Number);
+      const newStart = new Date(targetDate);
+      newStart.setHours(hours, minutes, 0, 0);
+      const newEnd = new Date(newStart.getTime() + duration);
+      
+      newStartTime = newStart.toTimeString().slice(0, 5);
+      newEndTime = newEnd.toTimeString().slice(0, 5);
+    } else {
+      newStartTime = originalStart.toTimeString().slice(0, 5);
+      newEndTime = originalEnd.toTimeString().slice(0, 5);
+    }
+
+    onAppointmentMove(appointment.id, targetDate, newStartTime, newEndTime);
+    setDraggedAppointment(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
+
+  const generateTimeSlots = () => {
+    const slots = [];
+    for (let hour = 7; hour <= 20; hour++) {
+      slots.push(`${hour.toString().padStart(2, '0')}:00`);
+      slots.push(`${hour.toString().padStart(2, '0')}:30`);
+    }
+    return slots;
+  };
+
+  const getAppointmentsByTimeSlot = (appointments: Appointment[], timeSlot: string) => {
+    return appointments.filter(apt => {
+      const startTime = new Date(apt.start_time);
+      const slotTime = `${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')}`;
+      return slotTime === timeSlot;
+    });
+  };
+
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  const timeSlots = generateTimeSlots();
 
   if (viewMode === 'month') {
     const days = getDaysInMonth(currentDate);
@@ -89,7 +142,7 @@ export const CalendarView = ({
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="grid grid-cols-7 border-b border-gray-200">
           {weekDays.map(day => (
-            <div key={day} className="p-3 text-center text-sm font-medium text-gray-600 bg-gray-50">
+            <div key={day} className="p-3 text-center text-sm font-medium text-agendei-teal bg-gray-50">
               {day}
             </div>
           ))}
@@ -102,12 +155,14 @@ export const CalendarView = ({
               className={`min-h-32 p-2 border-r border-b border-gray-100 ${
                 !day.isCurrentMonth ? 'bg-gray-50' : ''
               }`}
+              onDrop={(e) => handleDrop(e, day.date)}
+              onDragOver={handleDragOver}
             >
               <div className={`text-sm mb-2 ${
-                day.isCurrentMonth ? 'text-gray-900' : 'text-gray-400'
+                day.isCurrentMonth ? 'text-agendei-teal' : 'text-gray-400'
               } ${
                 day.date.toDateString() === new Date().toDateString() 
-                  ? 'font-bold text-agendei-teal' 
+                  ? 'font-bold' 
                   : ''
               }`}>
                 {day.date.getDate()}
@@ -120,7 +175,7 @@ export const CalendarView = ({
                     className={`text-xs p-1 rounded text-white cursor-pointer ${
                       appointment.status === 'confirmado' ? 'bg-green-500' :
                       appointment.status === 'pendente' ? 'bg-yellow-500' :
-                      'bg-gray-400'
+                      'bg-red-400'
                     }`}
                     onClick={() => onAppointmentClick(appointment)}
                   >
@@ -145,14 +200,17 @@ export const CalendarView = ({
     
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="grid grid-cols-7 border-b border-gray-200">
+        <div className="grid grid-cols-8 border-b border-gray-200">
+          <div className="p-4 text-center text-sm font-medium text-agendei-teal bg-gray-50">
+            Horário
+          </div>
           {days.map((day, index) => (
-            <div key={index} className="p-4 text-center border-r border-gray-200 last:border-r-0">
-              <div className="text-sm text-gray-600">{weekDays[index]}</div>
+            <div key={index} className="p-4 text-center border-r border-gray-200 last:border-r-0 bg-gray-50">
+              <div className="text-sm text-agendei-teal">{weekDays[index]}</div>
               <div className={`text-lg font-semibold mt-1 ${
                 day.date.toDateString() === new Date().toDateString() 
-                  ? 'text-agendei-teal' 
-                  : 'text-gray-900'
+                  ? 'text-agendei-teal font-bold' 
+                  : 'text-agendei-teal'
               }`}>
                 {day.date.getDate()}
               </div>
@@ -160,21 +218,29 @@ export const CalendarView = ({
           ))}
         </div>
         
-        <div className="grid grid-cols-7 min-h-96">
-          {days.map((day, index) => (
-            <div
-              key={index}
-              className="p-3 border-r border-gray-100 last:border-r-0"
-            >
-              <div className="space-y-2">
-                {day.appointments.map(appointment => (
-                  <AppointmentCard
-                    key={appointment.id}
-                    appointment={appointment}
-                    onClick={onAppointmentClick}
-                  />
-                ))}
+        <div className="max-h-96 overflow-y-auto">
+          {timeSlots.map(timeSlot => (
+            <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 min-h-16">
+              <div className="p-2 text-xs text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+                {timeSlot}
               </div>
+              {days.map((day, dayIndex) => (
+                <div
+                  key={`${timeSlot}-${dayIndex}`}
+                  className="p-1 border-r border-gray-100 last:border-r-0 min-h-16"
+                  onDrop={(e) => handleDrop(e, day.date, timeSlot)}
+                  onDragOver={handleDragOver}
+                >
+                  {getAppointmentsByTimeSlot(day.appointments, timeSlot).map(appointment => (
+                    <AppointmentCard
+                      key={appointment.id}
+                      appointment={appointment}
+                      onClick={onAppointmentClick}
+                      isDragging={draggedAppointment?.id === appointment.id}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -187,8 +253,8 @@ export const CalendarView = ({
   
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-      <div className="p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">
+      <div className="p-4 border-b border-gray-200 bg-gray-50">
+        <h3 className="text-lg font-semibold text-agendei-teal">
           {currentDate.toLocaleDateString('pt-BR', {
             weekday: 'long',
             year: 'numeric',
@@ -198,22 +264,28 @@ export const CalendarView = ({
         </h3>
       </div>
       
-      <div className="p-4">
-        {dayAppointments.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            Nenhum agendamento para hoje
+      <div className="max-h-96 overflow-y-auto">
+        {timeSlots.map(timeSlot => (
+          <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 min-h-16">
+            <div className="p-2 text-sm text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+              {timeSlot}
+            </div>
+            <div
+              className="col-span-3 p-2"
+              onDrop={(e) => handleDrop(e, currentDate, timeSlot)}
+              onDragOver={handleDragOver}
+            >
+              {getAppointmentsByTimeSlot(dayAppointments, timeSlot).map(appointment => (
+                <AppointmentCard
+                  key={appointment.id}
+                  appointment={appointment}
+                  onClick={onAppointmentClick}
+                  isDragging={draggedAppointment?.id === appointment.id}
+                />
+              ))}
+            </div>
           </div>
-        ) : (
-          <div className="space-y-3">
-            {dayAppointments.map(appointment => (
-              <AppointmentCard
-                key={appointment.id}
-                appointment={appointment}
-                onClick={onAppointmentClick}
-              />
-            ))}
-          </div>
-        )}
+        ))}
       </div>
     </div>
   );

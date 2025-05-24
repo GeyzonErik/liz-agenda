@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { CalendarView } from '@/components/CalendarView';
@@ -102,6 +101,22 @@ const Index = () => {
     setAppointments(prev => prev.filter(apt => apt.id !== id));
   };
 
+  const handleAppointmentMove = (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => {
+    setAppointments(prev => prev.map(apt => {
+      if (apt.id === appointmentId) {
+        const startDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newStartTime}`);
+        const endDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newEndTime}`);
+        
+        return {
+          ...apt,
+          start_time: startDateTime.toISOString(),
+          end_time: endDateTime.toISOString()
+        };
+      }
+      return apt;
+    }));
+  };
+
   return (
     <div className="min-h-screen bg-agendei-lightbg">
       <Header
@@ -119,6 +134,7 @@ const Index = () => {
           currentDate={currentDate}
           appointments={appointments}
           onAppointmentClick={handleAppointmentClick}
+          onAppointmentMove={handleAppointmentMove}
         />
       </main>
 
