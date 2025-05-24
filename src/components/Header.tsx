@@ -1,5 +1,5 @@
 
-import { Calendar, ChevronLeft, ChevronRight, Plus, User } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ViewMode } from '@/types/appointment';
 
@@ -17,7 +17,6 @@ export const Header = ({
   viewMode,
   onDateChange,
   onViewModeChange,
-  onCreateAppointment,
   userName = "Usuário"
 }: HeaderProps) => {
   const formatDate = () => {
@@ -109,15 +108,6 @@ export const Header = ({
                 </Button>
               ))}
             </div>
-
-            {/* Create Button */}
-            <Button
-              onClick={onCreateAppointment}
-              className="bg-agendei-teal hover:bg-agendei-teal/90 text-white"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Novo Agendamento
-            </Button>
 
             {/* User Info */}
             <div className="flex items-center space-x-2 text-sm text-gray-600 border-l border-gray-200 pl-4">
