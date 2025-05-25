@@ -15,19 +15,6 @@ export const useProfiles = () => {
 
   const fetchProfiles = async () => {
     try {
-<<<<<<< HEAD
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('full_name');
-
-      if (error) {
-        console.error('Error fetching profiles:', error);
-        return;
-      }
-
-      setProfiles(data || []);
-=======
       // Buscar da tabela professionals em vez de profiles
       const { data, error } = await supabase
         .from('professionals')
@@ -48,7 +35,6 @@ export const useProfiles = () => {
       })) || [];
 
       setProfiles(mappedProfiles);
->>>>>>> upstream/main
     } catch (error) {
       console.error('Error:', error);
     } finally {

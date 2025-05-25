@@ -17,10 +17,7 @@ export type Database = {
           end_time: string
           id: string
           notes: string | null
-<<<<<<< HEAD
-=======
           procedure_id: string | null
->>>>>>> upstream/main
           start_time: string
           status: string
           therapist_id: string
@@ -33,10 +30,7 @@ export type Database = {
           end_time: string
           id?: string
           notes?: string | null
-<<<<<<< HEAD
-=======
           procedure_id?: string | null
->>>>>>> upstream/main
           start_time: string
           status?: string
           therapist_id: string
@@ -49,10 +43,7 @@ export type Database = {
           end_time?: string
           id?: string
           notes?: string | null
-<<<<<<< HEAD
-=======
           procedure_id?: string | null
->>>>>>> upstream/main
           start_time?: string
           status?: string
           therapist_id?: string
@@ -60,8 +51,6 @@ export type Database = {
         }
         Relationships: [
           {
-<<<<<<< HEAD
-=======
             foreignKeyName: "appointments_procedure_id_fkey"
             columns: ["procedure_id"]
             isOneToOne: false
@@ -69,7 +58,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
->>>>>>> upstream/main
             foreignKeyName: "appointments_therapist_id_fkey"
             columns: ["therapist_id"]
             isOneToOne: false
@@ -78,8 +66,6 @@ export type Database = {
           },
         ]
       }
-<<<<<<< HEAD
-=======
       procedures: {
         Row: {
           created_at: string
@@ -140,7 +126,6 @@ export type Database = {
         }
         Relationships: []
       }
->>>>>>> upstream/main
       profiles: {
         Row: {
           avatar_url: string | null
