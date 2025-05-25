@@ -1,7 +1,8 @@
 
-import { Calendar, ChevronLeft, ChevronRight, User } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, User, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ViewMode } from '@/types/appointment';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HeaderProps {
   currentDate: Date;
@@ -19,6 +20,8 @@ export const Header = ({
   onViewModeChange,
   userName = "Usuário"
 }: HeaderProps) => {
+  const { signOut } = useAuth();
+
   const formatDate = () => {
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',
@@ -110,9 +113,19 @@ export const Header = ({
             </div>
 
             {/* User Info */}
-            <div className="flex items-center space-x-2 text-sm text-gray-600 border-l border-gray-200 pl-4">
-              <User className="w-4 h-4" />
-              <span>{userName}</span>
+            <div className="flex items-center space-x-4 text-sm text-gray-600 border-l border-gray-200 pl-4">
+              <div className="flex items-center space-x-2">
+                <User className="w-4 h-4" />
+                <span>{userName}</span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={signOut}
+                className="text-gray-600 hover:text-gray-900"
+              >
+                <LogOut className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </div>

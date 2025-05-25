@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -6,11 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Appointment } from '@/types/appointment';
+import { useProfiles } from '@/hooks/useProfiles';
 
 interface AppointmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (appointment: Omit<Appointment, 'id' | 'created_by'>) => void;
+  onSave: (appointment: any) => void;
   onDelete?: (id: string) => void;
   appointment?: Appointment | null;
 }
@@ -22,32 +22,27 @@ export const AppointmentModal = ({
   onDelete,
   appointment
 }: AppointmentModalProps) => {
+  const { profiles } = useProfiles();
   const [formData, setFormData] = useState({
     client_name: '',
-    therapist_name: '',
+    therapist_id: '',
     date: '',
     start_time: '',
     end_time: '',
     status: 'pendente' as 'confirmado' | 'cancelado' | 'pendente'
   });
 
-  const profissionais = [
-    'Dr. João Santos',
-    'Dra. Ana Costa',
-    'Dr. Roberto Lima',
-    'Dra. Beatriz Rocha',
-    'Dra. Maria Silva',
-    'Dr. Carlos Oliveira'
-  ];
-
   useEffect(() => {
     if (appointment) {
       const startDate = new Date(appointment.start_time);
       const endDate = new Date(appointment.end_time);
       
+      // Find therapist ID from profiles
+      const therapist = profiles.find(p => p.full_name === appointment.therapist_name);
+      
       setFormData({
         client_name: appointment.client_name,
-        therapist_name: appointment.therapist_name,
+        therapist_id: therapist?.id || '',
         date: startDate.toISOString().slice(0, 10),
         start_time: startDate.toTimeString().slice(0, 5),
         end_time: endDate.toTimeString().slice(0, 5),
@@ -57,28 +52,31 @@ export const AppointmentModal = ({
       const now = new Date();
       setFormData({
         client_name: '',
-        therapist_name: '',
+        therapist_id: '',
         date: now.toISOString().slice(0, 10),
         start_time: '09:00',
         end_time: '10:00',
         status: 'pendente'
       });
     }
-  }, [appointment, isOpen]);
+  }, [appointment, isOpen, profiles]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.client_name || !formData.therapist_name || !formData.date || !formData.start_time || !formData.end_time) {
+    if (!formData.client_name || !formData.therapist_id || !formData.date || !formData.start_time || !formData.end_time) {
       return;
     }
 
     const startDateTime = new Date(`${formData.date}T${formData.start_time}`);
     const endDateTime = new Date(`${formData.date}T${formData.end_time}`);
 
+    const therapist = profiles.find(p => p.id === formData.therapist_id);
+
     onSave({
       client_name: formData.client_name,
-      therapist_name: formData.therapist_name,
+      therapist_id: formData.therapist_id,
+      therapist_name: therapist?.full_name || '',
       start_time: startDateTime.toISOString(),
       end_time: endDateTime.toISOString(),
       status: formData.status
@@ -126,15 +124,15 @@ export const AppointmentModal = ({
           </div>
 
           <div>
-            <Label htmlFor="therapist_name" className="text-agendei-teal">Profissional</Label>
-            <Select value={formData.therapist_name} onValueChange={(value) => setFormData({ ...formData, therapist_name: value })}>
+            <Label htmlFor="therapist_id" className="text-agendei-teal">Profissional</Label>
+            <Select value={formData.therapist_id} onValueChange={(value) => setFormData({ ...formData, therapist_id: value })}>
               <SelectTrigger className="text-agendei-teal">
                 <SelectValue placeholder="Selecione o profissional" />
               </SelectTrigger>
               <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
-                {profissionais.map((profissional) => (
-                  <SelectItem key={profissional} value={profissional}>
-                    {profissional}
+                {profiles.map((profile) => (
+                  <SelectItem key={profile.id} value={profile.id}>
+                    {profile.full_name}
                   </SelectItem>
                 ))}
               </SelectContent>

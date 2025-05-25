@@ -3,54 +3,18 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { CalendarView } from '@/components/CalendarView';
 import { AppointmentModal } from '@/components/AppointmentModal';
+import { Login } from '@/components/Login';
 import { ViewMode, Appointment } from '@/types/appointment';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-// Mock data for demonstration - in a real app this would come from Supabase
-const mockAppointments: Appointment[] = [
-  {
-    id: '1',
-    client_name: 'Maria Silva',
-    therapist_name: 'Dr. João Santos',
-    start_time: new Date(2024, 4, 24, 9, 0).toISOString(),
-    end_time: new Date(2024, 4, 24, 10, 0).toISOString(),
-    status: 'confirmado',
-    created_by: 'user1'
-  },
-  {
-    id: '2',
-    client_name: 'Pedro Oliveira',
-    therapist_name: 'Dra. Ana Costa',
-    start_time: new Date(2024, 4, 24, 14, 30).toISOString(),
-    end_time: new Date(2024, 4, 24, 15, 30).toISOString(),
-    status: 'pendente',
-    created_by: 'user1'
-  },
-  {
-    id: '3',
-    client_name: 'Carla Mendes',
-    therapist_name: 'Dr. Roberto Lima',
-    start_time: new Date(2024, 4, 25, 11, 0).toISOString(),
-    end_time: new Date(2024, 4, 25, 12, 0).toISOString(),
-    status: 'cancelado',
-    created_by: 'user1'
-  },
-  {
-    id: '4',
-    client_name: 'Lucas Ferreira',
-    therapist_name: 'Dra. Beatriz Rocha',
-    start_time: new Date(2024, 4, 26, 16, 0).toISOString(),
-    end_time: new Date(2024, 4, 26, 17, 0).toISOString(),
-    status: 'confirmado',
-    created_by: 'user1'
-  }
-];
+import { useAuth } from '@/hooks/useAuth';
+import { useAppointments } from '@/hooks/useAppointments';
 
 const Index = () => {
+  const { user, loading: authLoading } = useAuth();
+  const { appointments, loading: appointmentsLoading, createAppointment, updateAppointment, deleteAppointment } = useAppointments();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>('week');
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFab, setShowFab] = useState(true);
@@ -69,6 +33,18 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-agendei-lightbg flex items-center justify-center">
+        <div className="text-agendei-teal">Carregando...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Login />;
+  }
+
   const handleCreateAppointment = () => {
     setSelectedAppointment(null);
     setIsModalOpen(true);
@@ -79,43 +55,28 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
-  const handleSaveAppointment = (appointmentData: Omit<Appointment, 'id' | 'created_by'>) => {
+  const handleSaveAppointment = async (appointmentData: any) => {
     if (selectedAppointment) {
       // Update existing appointment
-      setAppointments(prev => prev.map(apt => 
-        apt.id === selectedAppointment.id 
-          ? { ...apt, ...appointmentData }
-          : apt
-      ));
+      await updateAppointment(selectedAppointment.id, appointmentData);
     } else {
       // Create new appointment
-      const newAppointment: Appointment = {
-        id: Date.now().toString(),
-        created_by: 'current-user-id',
-        ...appointmentData
-      };
-      setAppointments(prev => [...prev, newAppointment]);
+      await createAppointment(appointmentData);
     }
   };
 
-  const handleDeleteAppointment = (id: string) => {
-    setAppointments(prev => prev.filter(apt => apt.id !== id));
+  const handleDeleteAppointment = async (id: string) => {
+    await deleteAppointment(id);
   };
 
-  const handleAppointmentMove = (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => {
-    setAppointments(prev => prev.map(apt => {
-      if (apt.id === appointmentId) {
-        const startDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newStartTime}`);
-        const endDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newEndTime}`);
-        
-        return {
-          ...apt,
-          start_time: startDateTime.toISOString(),
-          end_time: endDateTime.toISOString()
-        };
-      }
-      return apt;
-    }));
+  const handleAppointmentMove = async (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => {
+    const startDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newStartTime}`);
+    const endDateTime = new Date(`${newDate.toISOString().slice(0, 10)}T${newEndTime}`);
+    
+    await updateAppointment(appointmentId, {
+      start_time: startDateTime.toISOString(),
+      end_time: endDateTime.toISOString()
+    });
   };
 
   return (
@@ -126,17 +87,23 @@ const Index = () => {
         onDateChange={setCurrentDate}
         onViewModeChange={setViewMode}
         onCreateAppointment={handleCreateAppointment}
-        userName="Usuário Logado"
+        userName={user?.user_metadata?.full_name || user?.email || "Usuário"}
       />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <CalendarView
-          viewMode={viewMode}
-          currentDate={currentDate}
-          appointments={appointments}
-          onAppointmentClick={handleAppointmentClick}
-          onAppointmentMove={handleAppointmentMove}
-        />
+        {appointmentsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-agendei-teal">Carregando agendamentos...</div>
+          </div>
+        ) : (
+          <CalendarView
+            viewMode={viewMode}
+            currentDate={currentDate}
+            appointments={appointments}
+            onAppointmentClick={handleAppointmentClick}
+            onAppointmentMove={handleAppointmentMove}
+          />
+        )}
       </main>
 
       {/* Floating Action Button */}
@@ -152,7 +119,7 @@ const Index = () => {
       </div>
 
       {/* Welcome Message */}
-      {appointments.length === 0 && (
+      {appointments.length === 0 && !appointmentsLoading && (
         <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
           <div className="text-center p-8 bg-white rounded-lg shadow-lg max-w-md pointer-events-auto animate-fade-in">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
