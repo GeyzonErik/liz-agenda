@@ -15,17 +15,26 @@ export const useProfiles = () => {
 
   const fetchProfiles = async () => {
     try {
+      // Buscar da tabela professionals em vez de profiles
       const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .order('full_name');
+        .from('professionals')
+        .select('id, name, email')
+        .order('name');
 
       if (error) {
-        console.error('Error fetching profiles:', error);
+        console.error('Error fetching professionals:', error);
         return;
       }
 
-      setProfiles(data || []);
+      // Mapear para o formato esperado pelos componentes existentes
+      const mappedProfiles = data?.map(prof => ({
+        id: prof.id,
+        full_name: prof.name,
+        email: prof.email || '',
+        avatar_url: undefined
+      })) || [];
+
+      setProfiles(mappedProfiles);
     } catch (error) {
       console.error('Error:', error);
     } finally {

@@ -17,6 +17,7 @@ export type Database = {
           end_time: string
           id: string
           notes: string | null
+          procedure_id: string | null
           start_time: string
           status: string
           therapist_id: string
@@ -29,6 +30,7 @@ export type Database = {
           end_time: string
           id?: string
           notes?: string | null
+          procedure_id?: string | null
           start_time: string
           status?: string
           therapist_id: string
@@ -41,12 +43,20 @@ export type Database = {
           end_time?: string
           id?: string
           notes?: string | null
+          procedure_id?: string | null
           start_time?: string
           status?: string
           therapist_id?: string
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "appointments_procedure_id_fkey"
+            columns: ["procedure_id"]
+            isOneToOne: false
+            referencedRelation: "procedures"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "appointments_therapist_id_fkey"
             columns: ["therapist_id"]
@@ -55,6 +65,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      procedures: {
+        Row: {
+          created_at: string
+          description: string | null
+          duration: number | null
+          id: string
+          name: string
+          price: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          name: string
+          price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          duration?: number | null
+          id?: string
+          name?: string
+          price?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      professionals: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          phone: string | null
+          specialty: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          phone?: string | null
+          specialty?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
