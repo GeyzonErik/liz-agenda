@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/main
 import { useState } from 'react';
 import { ViewMode, Appointment, CalendarDay } from '@/types/appointment';
 import { AppointmentCard } from './AppointmentCard';
@@ -127,7 +130,10 @@ export const CalendarView = ({
       newEndTime = originalEnd.toTimeString().slice(0, 5);
     }
 
+<<<<<<< HEAD
     // Check for conflicts
+=======
+>>>>>>> upstream/main
     if (checkConflict(targetDate, newStartTime, newEndTime, appointment.therapist_name, appointment.id)) {
       alert('Conflito de horário! Já existe um agendamento para este profissional neste horário.');
       setDraggedAppointment(null);
@@ -167,8 +173,13 @@ export const CalendarView = ({
     const startTime = new Date(appointment.start_time);
     const endTime = new Date(appointment.end_time);
     const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
+<<<<<<< HEAD
     const slotsSpanned = Math.max(1, durationMinutes / 30); // Each slot is 30 minutes
     return `${slotsSpanned * 4}rem`; // 4rem per slot
+=======
+    const slotsSpanned = Math.max(1, durationMinutes / 30);
+    return `${slotsSpanned * 4}rem`;
+>>>>>>> upstream/main
   };
 
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -178,10 +189,17 @@ export const CalendarView = ({
     const days = getDaysInMonth(currentDate);
     
     return (
+<<<<<<< HEAD
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-12rem)] flex flex-col">
         <div className="grid grid-cols-7 border-b border-gray-200 shrink-0">
           {weekDays.map(day => (
             <div key={day} className="p-3 text-center text-sm font-medium text-agendei-teal bg-gray-50">
+=======
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
+        <div className="grid grid-cols-7 border-b border-gray-200 shrink-0">
+          {weekDays.map(day => (
+            <div key={day} className="p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-agendei-teal bg-gray-50">
+>>>>>>> upstream/main
               {day}
             </div>
           ))}
@@ -191,13 +209,21 @@ export const CalendarView = ({
           {days.map((day, index) => (
             <div
               key={index}
+<<<<<<< HEAD
               className={`min-h-32 p-2 border-r border-b border-gray-100 ${
+=======
+              className={`min-h-20 sm:min-h-32 p-1 sm:p-2 border-r border-b border-gray-100 ${
+>>>>>>> upstream/main
                 !day.isCurrentMonth ? 'bg-gray-50' : ''
               }`}
               onDrop={(e) => handleDrop(e, day.date)}
               onDragOver={handleDragOver}
             >
+<<<<<<< HEAD
               <div className={`text-sm mb-2 ${
+=======
+              <div className={`text-xs sm:text-sm mb-1 sm:mb-2 ${
+>>>>>>> upstream/main
                 day.isCurrentMonth ? 'text-agendei-teal' : 'text-gray-400'
               } ${
                 day.date.toDateString() === new Date().toDateString() 
@@ -208,10 +234,17 @@ export const CalendarView = ({
               </div>
               
               <div className="space-y-1">
+<<<<<<< HEAD
                 {day.appointments.slice(0, 3).map(appointment => (
                   <div
                     key={appointment.id}
                     className={`text-xs p-1 rounded text-white cursor-pointer ${
+=======
+                {day.appointments.slice(0, 2).map(appointment => (
+                  <div
+                    key={appointment.id}
+                    className={`text-xs p-1 rounded text-white cursor-pointer truncate ${
+>>>>>>> upstream/main
                       appointment.status === 'confirmado' ? 'bg-green-500' :
                       appointment.status === 'pendente' ? 'bg-agendei-teal' :
                       'bg-red-400'
@@ -223,9 +256,15 @@ export const CalendarView = ({
                     {appointment.client_name}
                   </div>
                 ))}
+<<<<<<< HEAD
                 {day.appointments.length > 3 && (
                   <div className="text-xs text-agendei-teal">
                     +{day.appointments.length - 3} mais
+=======
+                {day.appointments.length > 2 && (
+                  <div className="text-xs text-agendei-teal">
+                    +{day.appointments.length - 2}
+>>>>>>> upstream/main
                   </div>
                 )}
               </div>
@@ -240,6 +279,7 @@ export const CalendarView = ({
     const days = getWeekDays(currentDate);
     
     return (
+<<<<<<< HEAD
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-12rem)] flex flex-col">
         <div className="grid grid-cols-8 border-b border-gray-200 shrink-0">
           <div className="p-4 text-center text-sm font-medium text-agendei-teal bg-gray-50">
@@ -249,6 +289,17 @@ export const CalendarView = ({
             <div key={index} className="p-4 text-center border-r border-gray-200 last:border-r-0 bg-gray-50">
               <div className="text-sm text-agendei-teal">{weekDays[index]}</div>
               <div className={`text-lg font-semibold mt-1 ${
+=======
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
+        <div className="grid grid-cols-8 border-b border-gray-200 shrink-0">
+          <div className="p-2 sm:p-4 text-center text-xs sm:text-sm font-medium text-agendei-teal bg-gray-50">
+            Horário
+          </div>
+          {days.map((day, index) => (
+            <div key={index} className="p-2 sm:p-4 text-center border-r border-gray-200 last:border-r-0 bg-gray-50">
+              <div className="text-xs sm:text-sm text-agendei-teal">{weekDays[index]}</div>
+              <div className={`text-sm sm:text-lg font-semibold mt-1 ${
+>>>>>>> upstream/main
                 day.date.toDateString() === new Date().toDateString() 
                   ? 'text-agendei-teal font-bold' 
                   : 'text-agendei-teal'
@@ -261,8 +312,13 @@ export const CalendarView = ({
         
         <div className="flex-1 overflow-y-auto">
           {timeSlots.map(timeSlot => (
+<<<<<<< HEAD
             <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 relative" style={{ minHeight: '4rem' }}>
               <div className="p-2 text-xs text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+=======
+            <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
+              <div className="p-1 sm:p-2 text-xs text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+>>>>>>> upstream/main
                 {timeSlot}
               </div>
               {days.map((day, dayIndex) => (
@@ -301,9 +357,15 @@ export const CalendarView = ({
   const dayAppointments = getDayAppointments(currentDate);
   
   return (
+<<<<<<< HEAD
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-12rem)] flex flex-col">
       <div className="p-4 border-b border-gray-200 bg-gray-50 shrink-0">
         <h3 className="text-lg font-semibold text-agendei-teal">
+=======
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
+      <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-50 shrink-0">
+        <h3 className="text-base sm:text-lg font-semibold text-agendei-teal">
+>>>>>>> upstream/main
           {currentDate.toLocaleDateString('pt-BR', {
             weekday: 'long',
             year: 'numeric',
@@ -315,8 +377,13 @@ export const CalendarView = ({
       
       <div className="flex-1 overflow-y-auto">
         {timeSlots.map(timeSlot => (
+<<<<<<< HEAD
           <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 relative" style={{ minHeight: '4rem' }}>
             <div className="p-2 text-sm text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+=======
+          <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
+            <div className="p-2 text-xs sm:text-sm text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+>>>>>>> upstream/main
               {timeSlot}
             </div>
             <div

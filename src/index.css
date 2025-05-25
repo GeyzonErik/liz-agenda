@@ -21,7 +21,11 @@
     --secondary-foreground: 31 58 52;
 
     --muted: 243 244 246;
+<<<<<<< HEAD
     --muted-foreground: 107 114 128;
+=======
+    --muted-foreground: 39 76 91;
+>>>>>>> upstream/main
 
     --accent: 239 246 255;
     --accent-foreground: 31 58 52;
@@ -93,6 +97,32 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+<<<<<<< HEAD
+=======
+
+  /* Garantir que textos em fundo branco sejam azul petróleo */
+  .bg-white, 
+  .bg-white *,
+  [style*="background: white"],
+  [style*="background-color: white"],
+  [style*="background: #fff"],
+  [style*="background-color: #fff"] {
+    color: rgb(39 76 91) !important;
+  }
+
+  /* Exceções para elementos que devem manter cores específicas */
+  .bg-white .text-white,
+  .bg-white .text-red-500,
+  .bg-white .text-green-500,
+  .bg-white .text-blue-500,
+  .bg-white .text-yellow-500,
+  .bg-white button,
+  .bg-white .bg-agendei-teal,
+  .bg-white .bg-green-500,
+  .bg-white .bg-red-400 {
+    color: inherit !important;
+  }
+>>>>>>> upstream/main
 }
 
 @layer components {
@@ -111,4 +141,30 @@
   .appointment-cancelled {
     @apply bg-red-50 border-l-red-400 hover:bg-red-100;
   }
+<<<<<<< HEAD
+=======
+
+  /* Responsividade aprimorada */
+  @media (max-width: 640px) {
+    .appointment-card {
+      @apply p-2 text-sm;
+    }
+    
+    .text-lg {
+      @apply text-base;
+    }
+    
+    .text-xl {
+      @apply text-lg;
+    }
+    
+    .text-2xl {
+      @apply text-xl;
+    }
+    
+    .text-3xl {
+      @apply text-2xl;
+    }
+  }
+>>>>>>> upstream/main
 }
