@@ -29,11 +29,14 @@ export const useAppointments = () => {
       const formattedAppointments: Appointment[] = data.map(apt => ({
         id: apt.id,
         client_name: apt.client_name,
+        client_phone: apt.client_phone,
         therapist_name: apt.therapist?.full_name || 'Profissional não encontrado',
         start_time: apt.start_time,
         end_time: apt.end_time,
         status: apt.status as 'confirmado' | 'cancelado' | 'pendente',
-        created_by: apt.created_by
+        created_by: apt.created_by,
+        notes: apt.notes,
+        procedure_id: apt.procedure_id
       }));
 
       setAppointments(formattedAppointments);
@@ -52,10 +55,13 @@ export const useAppointments = () => {
         .from('appointments')
         .insert({
           client_name: appointmentData.client_name,
+          client_phone: appointmentData.client_phone,
           therapist_id: appointmentData.therapist_id,
           start_time: appointmentData.start_time,
           end_time: appointmentData.end_time,
           status: appointmentData.status,
+          notes: appointmentData.notes,
+          procedure_id: appointmentData.procedure_id,
           created_by: user.id
         });
 

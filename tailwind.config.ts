@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,13 +62,14 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				agendei: {
-					teal: '#274c5b',
-					darkgreen: '#1f3a34',
-					lightbg: '#f9fafb',
-					confirmed: '#22c55e',
-					pending: '#f59e0b',
-					cancelled: '#9ca3af'
+				agenda: {
+					primary: '#1C3C34',
+					secondary: '#2E4A62',
+					lightbg: '#F5F5F5',
+					confirmed: '#16a34a',
+					pending: '#eab308',
+					cancelled: '#dc2626',
+					accent: '#E8F0EB'
 				}
 			},
 			borderRadius: {
