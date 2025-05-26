@@ -32,13 +32,13 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
   const getStatusBadgeStyle = (status: string) => {
     switch (status) {
       case 'confirmado':
-        return 'bg-green-500 text-white';
+        return 'bg-agenda-confirmed text-white';
       case 'pendente':
-        return 'bg-yellow-500 text-white';
+        return 'bg-agenda-primary text-white';
       case 'cancelado':
-        return 'bg-red-500 text-white';
+        return 'bg-agenda-cancelled text-white';
       default:
-        return 'bg-gray-500 text-white';
+        return 'bg-agenda-primary text-white';
     }
   };
 
@@ -55,19 +55,19 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
         <div className="flex-1 min-w-0 h-full flex flex-col justify-between">
           <div>
             <div className="flex items-center space-x-2 mb-1">
-              <User className="w-3 h-3 flex-shrink-0" />
-              <p className={`text-sm font-medium truncate ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+              <User className="w-3 h-3 flex-shrink-0 text-agenda-primary" />
+              <p className={`text-sm font-medium truncate text-agenda-primary ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
                 {appointment.client_name}
               </p>
             </div>
             
-            <p className={`text-xs mb-1 truncate ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+            <p className={`text-xs mb-1 truncate text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
               Profissional: {appointment.therapist_name}
             </p>
           </div>
           
-          <div className="flex items-center space-x-1 text-xs">
-            <Clock className="w-3 h-3" />
+          <div className="flex items-center space-x-1 text-xs text-agenda-primary/70">
+            <Clock className="w-3 h-3 text-agenda-primary" />
             <span className={appointment.status === 'cancelado' ? 'line-through' : ''}>
               {formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}
             </span>

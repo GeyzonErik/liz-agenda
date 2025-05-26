@@ -101,15 +101,15 @@
   }
 
   .appointment-confirmed {
-    @apply bg-green-50 border-l-green-600 hover:bg-green-100 text-green-900;
+    @apply bg-green-50 border-l-agenda-confirmed hover:bg-green-100 text-agenda-primary;
   }
 
   .appointment-pending {
-    @apply bg-yellow-50 border-l-yellow-500 hover:bg-yellow-100 text-yellow-900;
+    @apply bg-agenda-accent border-l-agenda-primary hover:bg-agenda-accent/80 text-agenda-primary;
   }
 
   .appointment-cancelled {
-    @apply bg-red-50 border-l-red-400 hover:bg-red-100 text-red-900;
+    @apply bg-red-50 border-l-agenda-cancelled hover:bg-red-100 text-agenda-primary;
   }
 
   /* Responsividade aprimorada */
