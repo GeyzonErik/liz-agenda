@@ -10,14 +10,19 @@ export const useAppointments = () => {
   const { user } = useAuth();
 
   const fetchAppointments = async () => {
-    if (!user) return;
+    if (!user) {
+      console.log('No user found, skipping appointments fetch');
+      setLoading(false);
+      return;
+    }
 
     try {
+      console.log('Fetching appointments for user:', user.id);
       const { data, error } = await supabase
         .from('appointments')
         .select(`
           *,
-          therapist:profiles!therapist_id(id, full_name)
+          therapist:professionals!therapist_id(id, name)
         `)
         .order('start_time', { ascending: true });
 
@@ -26,11 +31,13 @@ export const useAppointments = () => {
         return;
       }
 
+      console.log('Raw appointments data:', data);
+
       const formattedAppointments: Appointment[] = data.map(apt => ({
         id: apt.id,
         client_name: apt.client_name,
         client_phone: apt.client_phone,
-        therapist_name: apt.therapist?.full_name || 'Profissional não encontrado',
+        therapist_name: apt.therapist?.name || 'Profissional não encontrado',
         start_time: apt.start_time,
         end_time: apt.end_time,
         status: apt.status as 'confirmado' | 'cancelado' | 'pendente',
@@ -39,19 +46,25 @@ export const useAppointments = () => {
         procedure_id: apt.procedure_id
       }));
 
+      console.log('Formatted appointments:', formattedAppointments);
       setAppointments(formattedAppointments);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error in fetchAppointments:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const createAppointment = async (appointmentData: Omit<Appointment, 'id' | 'created_by'> & { therapist_id: string }) => {
-    if (!user) return;
+    if (!user) {
+      console.error('No user found, cannot create appointment');
+      return;
+    }
 
     try {
-      const { error } = await supabase
+      console.log('Creating appointment with data:', appointmentData);
+      
+      const { data, error } = await supabase
         .from('appointments')
         .insert({
           client_name: appointmentData.client_name,
@@ -63,21 +76,26 @@ export const useAppointments = () => {
           notes: appointmentData.notes,
           procedure_id: appointmentData.procedure_id,
           created_by: user.id
-        });
+        })
+        .select();
 
       if (error) {
         console.error('Error creating appointment:', error);
-        return;
+        throw error;
       }
 
-      fetchAppointments();
+      console.log('Appointment created successfully:', data);
+      await fetchAppointments();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error in createAppointment:', error);
+      throw error;
     }
   };
 
   const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
     try {
+      console.log('Updating appointment:', id, updates);
+      
       const { error } = await supabase
         .from('appointments')
         .update(updates)
@@ -85,17 +103,21 @@ export const useAppointments = () => {
 
       if (error) {
         console.error('Error updating appointment:', error);
-        return;
+        throw error;
       }
 
-      fetchAppointments();
+      console.log('Appointment updated successfully');
+      await fetchAppointments();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error in updateAppointment:', error);
+      throw error;
     }
   };
 
   const deleteAppointment = async (id: string) => {
     try {
+      console.log('Deleting appointment:', id);
+      
       const { error } = await supabase
         .from('appointments')
         .delete()
@@ -103,16 +125,19 @@ export const useAppointments = () => {
 
       if (error) {
         console.error('Error deleting appointment:', error);
-        return;
+        throw error;
       }
 
-      fetchAppointments();
+      console.log('Appointment deleted successfully');
+      await fetchAppointments();
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error in deleteAppointment:', error);
+      throw error;
     }
   };
 
   useEffect(() => {
+    console.log('useAppointments effect triggered, user:', user?.id);
     fetchAppointments();
   }, [user]);
 

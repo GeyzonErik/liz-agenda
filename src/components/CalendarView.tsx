@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { ViewMode, Appointment, CalendarDay } from '@/types/appointment';
 import { AppointmentCard } from './AppointmentCard';
@@ -179,7 +180,7 @@ export const CalendarView = ({
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
         <div className="grid grid-cols-7 border-b border-gray-200 shrink-0">
           {weekDays.map(day => (
-            <div key={day} className="p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-agendei-teal bg-gray-50">
+            <div key={day} className="p-2 sm:p-3 text-center text-xs sm:text-sm font-medium text-agenda-primary bg-gray-50">
               {day}
             </div>
           ))}
@@ -196,7 +197,7 @@ export const CalendarView = ({
               onDragOver={handleDragOver}
             >
               <div className={`text-xs sm:text-sm mb-1 sm:mb-2 ${
-                day.isCurrentMonth ? 'text-agendei-teal' : 'text-gray-400'
+                day.isCurrentMonth ? 'text-agenda-primary' : 'text-gray-400'
               } ${
                 day.date.toDateString() === new Date().toDateString() 
                   ? 'font-bold' 
@@ -210,9 +211,9 @@ export const CalendarView = ({
                   <div
                     key={appointment.id}
                     className={`text-xs p-1 rounded text-white cursor-pointer truncate ${
-                      appointment.status === 'confirmado' ? 'bg-green-500' :
-                      appointment.status === 'pendente' ? 'bg-agendei-teal' :
-                      'bg-red-400'
+                      appointment.status === 'confirmado' ? 'bg-agenda-confirmed' :
+                      appointment.status === 'pendente' ? 'bg-agenda-primary' :
+                      'bg-agenda-cancelled'
                     }`}
                     onClick={() => onAppointmentClick(appointment)}
                     draggable
@@ -222,7 +223,7 @@ export const CalendarView = ({
                   </div>
                 ))}
                 {day.appointments.length > 2 && (
-                  <div className="text-xs text-agendei-teal">
+                  <div className="text-xs text-agenda-primary">
                     +{day.appointments.length - 2}
                   </div>
                 )}
@@ -240,16 +241,16 @@ export const CalendarView = ({
     return (
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
         <div className="grid grid-cols-8 border-b border-gray-200 shrink-0">
-          <div className="p-2 sm:p-4 text-center text-xs sm:text-sm font-medium text-agendei-teal bg-gray-50">
+          <div className="p-2 sm:p-4 text-center text-xs sm:text-sm font-medium text-agenda-primary bg-gray-50">
             Horário
           </div>
           {days.map((day, index) => (
             <div key={index} className="p-2 sm:p-4 text-center border-r border-gray-200 last:border-r-0 bg-gray-50">
-              <div className="text-xs sm:text-sm text-agendei-teal">{weekDays[index]}</div>
+              <div className="text-xs sm:text-sm text-agenda-primary">{weekDays[index]}</div>
               <div className={`text-sm sm:text-lg font-semibold mt-1 ${
                 day.date.toDateString() === new Date().toDateString() 
-                  ? 'text-agendei-teal font-bold' 
-                  : 'text-agendei-teal'
+                  ? 'text-agenda-primary font-bold' 
+                  : 'text-agenda-primary'
               }`}>
                 {day.date.getDate()}
               </div>
@@ -260,7 +261,7 @@ export const CalendarView = ({
         <div className="flex-1 overflow-y-auto">
           {timeSlots.map(timeSlot => (
             <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
-              <div className="p-1 sm:p-2 text-xs text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+              <div className="p-1 sm:p-2 text-xs text-agenda-primary bg-gray-50 border-r border-gray-200 flex items-center justify-center">
                 {timeSlot}
               </div>
               {days.map((day, dayIndex) => (
@@ -301,7 +302,7 @@ export const CalendarView = ({
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-[calc(100vh-8rem)] sm:h-[calc(100vh-12rem)] flex flex-col">
       <div className="p-3 sm:p-4 border-b border-gray-200 bg-gray-50 shrink-0">
-        <h3 className="text-base sm:text-lg font-semibold text-agendei-teal">
+        <h3 className="text-base sm:text-lg font-semibold text-agenda-primary">
           {currentDate.toLocaleDateString('pt-BR', {
             weekday: 'long',
             year: 'numeric',
@@ -314,7 +315,7 @@ export const CalendarView = ({
       <div className="flex-1 overflow-y-auto">
         {timeSlots.map(timeSlot => (
           <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
-            <div className="p-2 text-xs sm:text-sm text-agendei-teal bg-gray-50 border-r border-gray-200 flex items-center justify-center">
+            <div className="p-2 text-xs sm:text-sm text-agenda-primary bg-gray-50 border-r border-gray-200 flex items-center justify-center">
               {timeSlot}
             </div>
             <div
