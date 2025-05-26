@@ -11,14 +11,14 @@ export const Login = () => {
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-agenda-primary to-agenda-secondary rounded-lg flex items-center justify-center">
+            <div className="w-16 h-16 bg-agenda-primary rounded-lg flex items-center justify-center">
               <Flower2 className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-agenda-primary to-agenda-secondary bg-clip-text text-transparent mb-2">
+          <h1 className="text-3xl font-bold text-agenda-primary mb-2">
             Agenda-Liz
           </h1>
-          <p className="text-agenda-primary">
+          <p className="text-agenda-primary/80">
             Sistema de agendamento para centro terapêutico
           </p>
         </div>

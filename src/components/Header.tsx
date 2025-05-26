@@ -66,10 +66,10 @@ export const Header = ({
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-agenda-primary to-agenda-secondary rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-agenda-primary rounded-lg flex items-center justify-center">
                 <Flower2 className="w-5 h-5 text-white" />
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-agenda-primary to-agenda-secondary bg-clip-text text-transparent">
+              <h1 className="text-2xl font-bold text-agenda-primary">
                 Agenda-Liz
               </h1>
             </div>
@@ -81,7 +81,7 @@ export const Header = ({
                   variant="outline"
                   size="sm"
                   onClick={() => navigateDate('prev')}
-                  className="hover:bg-gray-50"
+                  className="hover:bg-agenda-accent border-agenda-primary/20 text-agenda-primary"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </Button>
@@ -96,14 +96,14 @@ export const Header = ({
                   variant="outline"
                   size="sm"
                   onClick={() => navigateDate('next')}
-                  className="hover:bg-gray-50"
+                  className="hover:bg-agenda-accent border-agenda-primary/20 text-agenda-primary"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
 
               {/* View Mode Buttons */}
-              <div className="flex rounded-lg border border-gray-200 overflow-hidden">
+              <div className="flex rounded-lg border border-agenda-primary/20 overflow-hidden">
                 {(['day', 'week', 'month'] as const).map((mode) => (
                   <Button
                     key={mode}
@@ -113,7 +113,7 @@ export const Header = ({
                     className={`rounded-none border-0 px-4 ${
                       viewMode === mode 
                         ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
-                        : 'hover:bg-gray-50'
+                        : 'hover:bg-agenda-accent text-agenda-primary'
                     }`}
                   >
                     {mode === 'day' && 'Dia'}
@@ -133,7 +133,7 @@ export const Header = ({
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-agenda-primary hover:text-agenda-secondary"
+                  className="text-agenda-primary hover:text-agenda-secondary hover:bg-agenda-accent"
                 >
                   <LogOut className="w-4 h-4" />
                 </Button>
@@ -149,10 +149,10 @@ export const Header = ({
           <div className="flex items-center justify-between mb-3">
             {/* Logo Mobile */}
             <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 bg-gradient-to-br from-agenda-primary to-agenda-secondary rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 bg-agenda-primary rounded-lg flex items-center justify-center">
                 <Flower2 className="w-4 h-4 text-white" />
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-agenda-primary to-agenda-secondary bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold text-agenda-primary">
                 Agenda-Liz
               </h1>
             </div>
@@ -162,7 +162,7 @@ export const Header = ({
               variant="ghost"
               size="sm"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-agenda-primary"
+              className="text-agenda-primary hover:bg-agenda-accent"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </Button>
@@ -174,7 +174,7 @@ export const Header = ({
               variant="outline"
               size="sm"
               onClick={() => navigateDate('prev')}
-              className="p-2"
+              className="p-2 border-agenda-primary/20 text-agenda-primary hover:bg-agenda-accent"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -189,7 +189,7 @@ export const Header = ({
               variant="outline"
               size="sm"
               onClick={() => navigateDate('next')}
-              className="p-2"
+              className="p-2 border-agenda-primary/20 text-agenda-primary hover:bg-agenda-accent"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
@@ -212,7 +212,7 @@ export const Header = ({
                     className={`mobile-nav-button ${
                       viewMode === mode 
                         ? 'bg-agenda-primary text-white' 
-                        : 'text-agenda-primary'
+                        : 'text-agenda-primary border-agenda-primary/20 hover:bg-agenda-accent'
                     }`}
                   >
                     {mode === 'day' && 'Dia'}
@@ -232,7 +232,7 @@ export const Header = ({
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-agenda-primary hover:text-agenda-secondary"
+                  className="text-agenda-primary hover:text-agenda-secondary hover:bg-agenda-accent"
                 >
                   <LogOut className="w-4 h-4" />
                   Sair

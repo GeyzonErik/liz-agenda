@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -69,7 +68,8 @@ export default {
 					lightbg: '#F5F5F5',
 					confirmed: '#16a34a',
 					pending: '#eab308',
-					cancelled: '#dc2626'
+					cancelled: '#dc2626',
+					accent: '#E8F0EB'
 				}
 			},
 			borderRadius: {

@@ -12,13 +12,13 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
   const getStatusStyle = (status: string) => {
     switch (status) {
       case 'confirmado':
-        return 'appointment-confirmed text-agendei-teal border-l-green-500';
+        return 'appointment-confirmed';
       case 'pendente':
-        return 'appointment-pending text-agendei-teal border-l-agendei-teal';
+        return 'appointment-pending';
       case 'cancelado':
-        return 'appointment-cancelled text-agendei-teal border-l-red-400 bg-red-50';
+        return 'appointment-cancelled';
       default:
-        return 'appointment-pending text-agendei-teal border-l-agendei-teal';
+        return 'appointment-pending';
     }
   };
 
@@ -27,6 +27,19 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getStatusBadgeStyle = (status: string) => {
+    switch (status) {
+      case 'confirmado':
+        return 'bg-green-500 text-white';
+      case 'pendente':
+        return 'bg-yellow-500 text-white';
+      case 'cancelado':
+        return 'bg-red-500 text-white';
+      default:
+        return 'bg-gray-500 text-white';
+    }
   };
 
   return (
@@ -48,7 +61,7 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
               </p>
             </div>
             
-            <p className={`text-xs text-agendei-teal mb-1 truncate ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+            <p className={`text-xs mb-1 truncate ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
               Profissional: {appointment.therapist_name}
             </p>
           </div>
@@ -61,11 +74,7 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
           </div>
         </div>
         
-        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
-          appointment.status === 'confirmado' ? 'bg-green-100 text-green-800' :
-          appointment.status === 'pendente' ? 'bg-agendei-teal text-white' :
-          'bg-red-100 text-red-800'
-        }`}>
+        <div className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeStyle(appointment.status)}`}>
           {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
         </div>
       </div>

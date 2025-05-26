@@ -14,14 +14,14 @@
     --popover: 255 255 255;
     --popover-foreground: 28 60 52;
 
-    --primary: 46 74 98;
+    --primary: 28 60 52;
     --primary-foreground: 255 255 255;
 
-    --secondary: 240 242 240;
+    --secondary: 232 240 235;
     --secondary-foreground: 28 60 52;
 
     --muted: 240 242 240;
-    --muted-foreground: 46 74 98;
+    --muted-foreground: 107 114 128;
 
     --accent: 232 240 235;
     --accent-foreground: 28 60 52;
@@ -31,18 +31,18 @@
 
     --border: 220 225 220;
     --input: 220 225 220;
-    --ring: 46 74 98;
+    --ring: 28 60 52;
 
     --radius: 0.5rem;
 
     --sidebar-background: 255 255 255;
     --sidebar-foreground: 28 60 52;
-    --sidebar-primary: 46 74 98;
+    --sidebar-primary: 28 60 52;
     --sidebar-primary-foreground: 255 255 255;
     --sidebar-accent: 240 242 240;
     --sidebar-accent-foreground: 28 60 52;
     --sidebar-border: 220 225 220;
-    --sidebar-ring: 46 74 98;
+    --sidebar-ring: 28 60 52;
   }
 
   .dark {
@@ -93,30 +93,6 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-
-  /* Garantir que textos em fundo branco sejam verde escuro */
-  .bg-white, 
-  .bg-white *,
-  [style*="background: white"],
-  [style*="background-color: white"],
-  [style*="background: #fff"],
-  [style*="background-color: #fff"] {
-    color: rgb(28 60 52) !important;
-  }
-
-  /* Exceções para elementos que devem manter cores específicas */
-  .bg-white .text-white,
-  .bg-white .text-red-500,
-  .bg-white .text-green-500,
-  .bg-white .text-blue-500,
-  .bg-white .text-yellow-500,
-  .bg-white button,
-  .bg-white .bg-agenda-primary,
-  .bg-white .bg-agenda-secondary,
-  .bg-white .bg-green-500,
-  .bg-white .bg-red-400 {
-    color: inherit !important;
-  }
 }
 
 @layer components {
@@ -125,15 +101,15 @@
   }
   
   .appointment-confirmed {
-    @apply bg-green-50 border-l-green-600 hover:bg-green-100;
+    @apply bg-green-50 border-l-green-600 hover:bg-green-100 text-green-900;
   }
   
   .appointment-pending {
-    @apply bg-blue-50 border-l-agenda-secondary hover:bg-blue-100;
+    @apply bg-yellow-50 border-l-yellow-500 hover:bg-yellow-100 text-yellow-900;
   }
   
   .appointment-cancelled {
-    @apply bg-red-50 border-l-red-400 hover:bg-red-100;
+    @apply bg-red-50 border-l-red-400 hover:bg-red-100 text-red-900;
   }
 
   /* Responsividade aprimorada */
