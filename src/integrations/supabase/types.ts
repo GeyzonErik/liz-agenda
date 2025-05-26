@@ -12,6 +12,7 @@ export type Database = {
       appointments: {
         Row: {
           client_name: string
+          client_phone: string | null
           created_at: string | null
           created_by: string | null
           end_time: string
@@ -25,6 +26,7 @@ export type Database = {
         }
         Insert: {
           client_name: string
+          client_phone?: string | null
           created_at?: string | null
           created_by?: string | null
           end_time: string
@@ -38,6 +40,7 @@ export type Database = {
         }
         Update: {
           client_name?: string
+          client_phone?: string | null
           created_at?: string | null
           created_by?: string | null
           end_time?: string
@@ -65,6 +68,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      internal_passwords: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          password_hash: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          password_hash: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          password_hash?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       procedures: {
         Row: {
