@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -68,7 +67,7 @@ export default {
 					secondary: '#1C3C34',
 					lightbg: '#F5F5F5',
 					confirmed: '#16a34a',
-					pending: '#eab308',
+					pending: '#2A5A4F',
 					cancelled: '#dc2626',
 					accent: '#E8F0EB'
 				}
