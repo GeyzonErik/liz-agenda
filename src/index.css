@@ -112,6 +112,29 @@
     @apply bg-red-50 border-l-agenda-cancelled hover:bg-red-100 text-agenda-primary;
   }
 
+  /* Correção das cores dos selects */
+  [data-radix-select-trigger] {
+    border-color: rgb(46 74 98 / 0.3) !important;
+  }
+  
+  [data-radix-select-trigger]:focus {
+    border-color: rgb(46 74 98) !important;
+    box-shadow: 0 0 0 2px rgb(46 74 98 / 0.2) !important;
+  }
+
+  [data-radix-select-content] {
+    background-color: white !important;
+    border-color: rgb(46 74 98 / 0.2) !important;
+  }
+
+  [data-radix-select-item] {
+    color: rgb(28 60 52) !important;
+  }
+
+  [data-radix-select-item]:hover {
+    background-color: rgb(232 240 235) !important;
+  }
+
   /* Responsividade aprimorada */
   @media (max-width: 640px) {
     .appointment-card {

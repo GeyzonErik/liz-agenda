@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { CalendarView } from '@/components/CalendarView';
 import { AppointmentModal } from '@/components/AppointmentModal';
+import { AppointmentViewModal } from '@/components/AppointmentViewModal';
 import { Login } from '@/components/Login';
 import { InternalAuth } from '@/components/InternalAuth';
 import { ViewMode, Appointment } from '@/types/appointment';
@@ -20,6 +21,7 @@ const Index = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('week');
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [showFab, setShowFab] = useState(true);
 
   // Show/hide FAB based on scroll
@@ -59,6 +61,11 @@ const Index = () => {
 
   const handleAppointmentClick = (appointment: Appointment) => {
     setSelectedAppointment(appointment);
+    setIsViewModalOpen(true);
+  };
+
+  const handleEditAppointment = () => {
+    setIsViewModalOpen(false);
     setIsModalOpen(true);
   };
 
@@ -72,8 +79,18 @@ const Index = () => {
     }
   };
 
-  const handleDeleteAppointment = async (id: string) => {
-    await deleteAppointment(id);
+  const handleDeleteAppointment = async () => {
+    if (selectedAppointment) {
+      await deleteAppointment(selectedAppointment.id);
+    }
+  };
+
+  const handleStatusChange = async (status: 'confirmado' | 'cancelado' | 'pendente') => {
+    if (selectedAppointment) {
+      await updateAppointment(selectedAppointment.id, { status });
+      // Update local state to reflect the change immediately
+      setSelectedAppointment({ ...selectedAppointment, status });
+    }
   };
 
   const handleAppointmentMove = async (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => {
@@ -146,11 +163,23 @@ const Index = () => {
         </div>
       )}
 
+      {/* View Modal */}
+      {selectedAppointment && (
+        <AppointmentViewModal
+          isOpen={isViewModalOpen}
+          onClose={() => setIsViewModalOpen(false)}
+          appointment={selectedAppointment}
+          onEdit={handleEditAppointment}
+          onDelete={handleDeleteAppointment}
+          onStatusChange={handleStatusChange}
+        />
+      )}
+
+      {/* Edit/Create Modal */}
       <AppointmentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveAppointment}
-        onDelete={handleDeleteAppointment}
         appointment={selectedAppointment}
       />
     </div>
