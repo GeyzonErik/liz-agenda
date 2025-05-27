@@ -64,13 +64,13 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				agenda: {
-					primary: '#1C3C34',
-					secondary: '#1C3C34',
-					lightbg: '#F5F5F5',
-					confirmed: '#16a34a',
-					pending: '#eab308',
-					cancelled: '#dc2626',
-					accent: '#E8F0EB'
+					primary: '#1C3C34',    // Verde escuro principal
+					secondary: '#2E4A62',   // Azul petróleo
+					lightbg: '#F5F5F5',    // Bege claro
+					confirmed: '#16a34a',   // Verde para confirmado
+					pending: '#eab308',     // Amarelo para pendente
+					cancelled: '#dc2626',   // Vermelho para cancelado
+					accent: '#E8F0EB'       // Verde muito claro para acentos
 				}
 			},
 			borderRadius: {
