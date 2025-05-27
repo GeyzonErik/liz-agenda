@@ -12,14 +12,12 @@ const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiO
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 // Log para verificar a conexão
-console.log('Supabase client initialized with URL:', SUPABASE_URL);
-console.log('Checking Supabase connection...');
 
 // Teste de conexão simples
 supabase.from('profiles').select('count').then(({ data, error }) => {
   if (error) {
     console.error('Supabase connection error:', error);
   } else {
-    console.log('Supabase connected successfully!');
+    console.assert('Supabase connected successfully!');
   }
 });

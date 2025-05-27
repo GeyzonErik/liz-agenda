@@ -35,7 +35,7 @@ export const Header = ({
 
   const navigateDate = (direction: 'prev' | 'next') => {
     let newDate: Date;
-    
+
     if (direction === 'prev') {
       switch (viewMode) {
         case 'day':
@@ -65,7 +65,7 @@ export const Header = ({
           newDate = currentDate;
       }
     }
-    
+
     onDateChange(newDate);
   };
 
@@ -88,24 +88,25 @@ export const Header = ({
 
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
+      <MobileMenu />
       <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo e Menu Mobile */}
           <div className="flex items-center space-x-4">
-            <MobileMenu />
+
             <div className="flex items-center space-x-6">
               <h1 className="text-xl sm:text-2xl font-bold text-agenda-primary">
                 Agenda-Liz 🌸
               </h1>
-              
+
               {/* View Mode Buttons - Desktop */}
               <div className="hidden md:flex items-center space-x-2">
                 <Button
                   variant={viewMode === 'day' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => onViewModeChange('day')}
-                  className={viewMode === 'day' 
-                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                  className={viewMode === 'day'
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
                     : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
                   }
                 >
@@ -115,8 +116,8 @@ export const Header = ({
                   variant={viewMode === 'week' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => onViewModeChange('week')}
-                  className={viewMode === 'week' 
-                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                  className={viewMode === 'week'
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
                     : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
                   }
                 >
@@ -126,8 +127,8 @@ export const Header = ({
                   variant={viewMode === 'month' ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => onViewModeChange('month')}
-                  className={viewMode === 'month' 
-                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                  className={viewMode === 'month'
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
                     : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
                   }
                 >
@@ -148,13 +149,13 @@ export const Header = ({
               >
                 <ChevronLeft className="w-4 h-4" />
               </Button>
-              
+
               <div className="hidden sm:block min-w-0">
                 <h2 className="text-sm sm:text-lg font-semibold text-agenda-primary text-center whitespace-nowrap">
                   {formatDateDisplay()}
                 </h2>
               </div>
-              
+
               <Button
                 variant="outline"
                 size="sm"
@@ -175,7 +176,7 @@ export const Header = ({
                 <Plus className="w-4 h-4 mr-2" />
                 Novo
               </Button>
-              
+
               <div className="hidden md:flex items-center space-x-2">
                 <span className="text-sm text-agenda-primary">
                   {userName}
@@ -199,8 +200,8 @@ export const Header = ({
             variant={viewMode === 'day' ? 'default' : 'outline'}
             size="sm"
             onClick={() => onViewModeChange('day')}
-            className={viewMode === 'day' 
-              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+            className={viewMode === 'day'
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
               : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
             }
           >
@@ -210,8 +211,8 @@ export const Header = ({
             variant={viewMode === 'week' ? 'default' : 'outline'}
             size="sm"
             onClick={() => onViewModeChange('week')}
-            className={viewMode === 'week' 
-              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+            className={viewMode === 'week'
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
               : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
             }
           >
@@ -221,8 +222,8 @@ export const Header = ({
             variant={viewMode === 'month' ? 'default' : 'outline'}
             size="sm"
             onClick={() => onViewModeChange('month')}
-            className={viewMode === 'month' 
-              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+            className={viewMode === 'month'
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90'
               : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
             }
           >
