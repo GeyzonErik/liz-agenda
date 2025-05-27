@@ -1,12 +1,12 @@
-
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Appointment } from '@/types/appointment';
-import { useProfiles } from '@/hooks/useProfiles';
+import { useProfessionals } from '@/hooks/useProfiles';
 import { useProcedures } from '@/hooks/useProcedures';
 import { AppointmentFormStep1 } from './AppointmentFormStep1';
 import { AppointmentFormStep2 } from './AppointmentFormStep2';
+import { toast } from '@/components/ui/use-toast';
 
 interface AppointmentModalProps {
   isOpen: boolean;
@@ -14,6 +14,7 @@ interface AppointmentModalProps {
   onSave: (appointment: any) => void;
   onDelete?: (id: string) => void;
   appointment?: Appointment | null;
+  appointments: Appointment[];
 }
 
 export const AppointmentModal = ({
@@ -21,9 +22,10 @@ export const AppointmentModal = ({
   onClose,
   onSave,
   onDelete,
-  appointment
+  appointment,
+  appointments
 }: AppointmentModalProps) => {
-  const { profiles } = useProfiles();
+  const { professionals } = useProfessionals();
   const { procedures } = useProcedures();
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -48,7 +50,7 @@ export const AppointmentModal = ({
       const endDate = new Date(appointment.end_time);
 
       // Find therapist ID from profiles
-      const therapist = profiles.find(p => p.full_name === appointment.therapist_name);
+      const therapist = professionals.find(p => p.full_name === appointment.therapist_name);
 
       setClientData({
         client_name: appointment.client_name,
@@ -81,15 +83,39 @@ export const AppointmentModal = ({
       });
     }
     setCurrentStep(1);
-  }, [appointment, isOpen, profiles]);
+  }, [appointment, isOpen, professionals]);
 
   const handleSave = () => {
     const startDateTime = new Date(`${appointmentData.date}T${appointmentData.start_time}`);
     const endDateTime = new Date(`${appointmentData.date}T${appointmentData.end_time}`);
+    const therapist = professionals.find(p => p.id === appointmentData.therapist_id);
 
-    const therapist = profiles.find(p => p.id === appointmentData.therapist_id);
+    // Check for conflicts
+    const hasConflict = appointments.some(apt => {
+      if (appointment?.id === apt.id) return false; // Skip current appointment when editing
+      if (apt.therapist_name !== therapist?.full_name) return false;
+
+      const aptStart = new Date(apt.start_time);
+      const aptEnd = new Date(apt.end_time);
+
+      // Check if dates are the same
+      if (aptStart.toDateString() !== startDateTime.toDateString()) return false;
+
+      // Check for time overlap
+      return (startDateTime < aptEnd && endDateTime > aptStart);
+    });
+
+    if (hasConflict) {
+      toast({
+        title: "Erro",
+        description: "Já existe um agendamento para este profissional neste horário",
+        variant: "destructive"
+      });
+      return;
+    }
 
     onSave({
+      ...appointment, // Preserve existing appointment data
       client_name: clientData.client_name,
       client_phone: clientData.client_phone,
       notes: clientData.notes,
@@ -130,7 +156,7 @@ export const AppointmentModal = ({
             onClick={handleCancel}
             className="hover:bg-gray-100 p-1"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4 text-agenda-primary" />
           </Button>
         </div>
 

@@ -1,4 +1,3 @@
-
 import { Clock, User } from 'lucide-react';
 import { Appointment } from '@/types/appointment';
 
@@ -57,8 +56,13 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
       }}
     >
       <div className="flex flex-col h-full relative">
+        {/* Badge de status - só mostrar se não for pendente no mobile ou sempre no desktop */}
+        <div className={`status-badge absolute bottom-0 right-0 px-1.5 py-0.5 rounded text-[10px] font-medium z-10 ${getStatusBadgeStyle(appointment.status)} ${!shouldShowBadge(appointment.status) ? 'sm:block hidden' : ''}`}>
+          {appointment.status.charAt(0).toUpperCase()}
+        </div>
+
         {/* Header com nome do cliente */}
-        <div className="flex items-start space-x-2 mb-2">
+        <div className="flex items-start space-x-2 mb-1">
           <User className="w-3 h-3 flex-shrink-0 text-agenda-primary mt-0.5" />
           <p className={`client-name text-sm font-medium text-agenda-primary flex-1 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
             {appointment.client_name}
@@ -66,21 +70,16 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
         </div>
         
         {/* Profissional */}
-        <p className={`therapist-name text-xs mb-2 text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+        <p className={`therapist-name text-xs text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
           {appointment.therapist_name}
         </p>
         
         {/* Horário */}
-        <div className="flex items-center space-x-1 text-xs text-agenda-primary/70 mt-auto mb-8 sm:mb-2">
+        <div className="flex items-center space-x-1 text-xs text-agenda-primary/70 mt-auto">
           <Clock className="w-3 h-3 text-agenda-primary" />
           <span className={`time-display ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
             {formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}
           </span>
-        </div>
-        
-        {/* Badge de status - só mostrar se não for pendente no mobile ou sempre no desktop */}
-        <div className={`status-badge absolute bottom-2 right-2 sm:top-2 sm:bottom-auto px-2 py-1 rounded-full text-xs font-medium z-10 ${getStatusBadgeStyle(appointment.status)} ${!shouldShowBadge(appointment.status) ? 'sm:block hidden' : ''}`}>
-          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
         </div>
       </div>
     </div>

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
-import { useProfiles } from '@/hooks/useProfiles';
+import { useProfessionals } from '@/hooks/useProfiles';
 import { useProcedures } from '@/hooks/useProcedures';
 
 interface FormData {
@@ -42,71 +42,44 @@ export const AppointmentFormStep2 = ({
   onCancel,
   appointment
 }: AppointmentFormStep2Props) => {
-  const { profiles } = useProfiles();
+  const { professionals: profiles } = useProfessionals();
   const { procedures } = useProcedures();
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const newErrors: {[key: string]: string} = {};
-    
+
+    const newErrors: { [key: string]: string } = {};
+
     if (!appointmentData.procedure_id) {
       newErrors.procedure_id = 'Selecione um procedimento';
     }
-    
+
     if (!appointmentData.therapist_id) {
       newErrors.therapist_id = 'Selecione um profissional';
     }
-    
+
     if (!appointmentData.date) {
       newErrors.date = 'Data é obrigatória';
     }
-    
+
     if (!appointmentData.start_time) {
       newErrors.start_time = 'Hora de início é obrigatória';
     }
-    
+
     if (!appointmentData.end_time) {
       newErrors.end_time = 'Hora de fim é obrigatória';
     }
-    
+
     if (appointmentData.start_time && appointmentData.end_time && appointmentData.start_time >= appointmentData.end_time) {
       newErrors.end_time = 'Hora de fim deve ser posterior ao início';
     }
-    
+
     setErrors(newErrors);
-    
+
     if (Object.keys(newErrors).length === 0) {
       onSave();
     }
-  };
-
-  const generateWhatsAppLink = () => {
-    const cleanPhone = clientData.client_phone.replace(/\D/g, '');
-    const phoneWithCountry = cleanPhone.startsWith('55') ? cleanPhone : `55${cleanPhone}`;
-    
-    const selectedProcedure = procedures.find(p => p.id === appointmentData.procedure_id);
-    const selectedProfessional = profiles.find(p => p.id === appointmentData.therapist_id);
-    
-    const date = new Date(appointmentData.date);
-    const formattedDate = date.toLocaleDateString('pt-BR');
-    
-    const message = `Olá ${clientData.client_name}! 🌸
-
-Lembramos que você tem uma consulta agendada:
-
-📍 *Centro Terapêutico Agenda-Liz*
-👩‍⚕️ *Profissional:* ${selectedProfessional?.full_name || 'Profissional'}
-🩺 *Procedimento:* ${selectedProcedure?.name || 'Procedimento'}
-📅 *Data:* ${formattedDate}
-⏰ *Horário:* ${appointmentData.start_time}
-
-Aguardamos você! Em caso de dúvidas, entre em contato conosco.
-
-Até breve! 💚`;
-
-    return `https://wa.me/${phoneWithCountry}?text=${encodeURIComponent(message)}`;
   };
 
   return (
@@ -143,16 +116,16 @@ Até breve! 💚`;
           <Label htmlFor="procedure_id" className="text-agenda-primary text-sm font-medium">
             Procedimento *
           </Label>
-          <Select 
-            value={appointmentData.procedure_id} 
+          <Select
+            value={appointmentData.procedure_id}
             onValueChange={(value) => onAppointmentDataChange({ ...appointmentData, procedure_id: value })}
           >
             <SelectTrigger className={`mt-1 text-agenda-primary ${errors.procedure_id ? 'border-red-500' : ''}`}>
               <SelectValue placeholder="Selecione o procedimento" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 text-agenda-primary">
               {procedures.map((procedure) => (
-                <SelectItem key={procedure.id} value={procedure.id} className="text-agenda-primary">
+                <SelectItem key={procedure.id} value={procedure.id} className="cursor-pointer data-[highlighted]:text-agenda-primary/80  text-agenda-primary">
                   {procedure.name}
                   {procedure.duration && ` (${procedure.duration}min)`}
                   {procedure.price && ` - R$ ${procedure.price.toFixed(2)}`}
@@ -169,16 +142,16 @@ Até breve! 💚`;
           <Label htmlFor="therapist_id" className="text-agenda-primary text-sm font-medium">
             Profissional *
           </Label>
-          <Select 
-            value={appointmentData.therapist_id} 
+          <Select
+            value={appointmentData.therapist_id}
             onValueChange={(value) => onAppointmentDataChange({ ...appointmentData, therapist_id: value })}
           >
             <SelectTrigger className={`mt-1 text-agenda-primary ${errors.therapist_id ? 'border-red-500' : ''}`}>
               <SelectValue placeholder="Selecione o profissional" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50">
+            <SelectContent className="bg-white border border-gray-200 shadow-lg z-50 text-agenda-primary">
               {profiles.map((profile) => (
-                <SelectItem key={profile.id} value={profile.id} className="text-agenda-primary">
+                <SelectItem key={profile.id} value={profile.id} className="cursor-pointer data-[highlighted]:text-agenda-primary/80 text-agenda-primary">
                   {profile.full_name}
                 </SelectItem>
               ))}
@@ -244,9 +217,9 @@ Até breve! 💚`;
             <Label htmlFor="status" className="text-agenda-primary text-sm font-medium">
               Status
             </Label>
-            <Select 
-              value={appointmentData.status} 
-              onValueChange={(value: 'confirmado' | 'cancelado' | 'pendente') => 
+            <Select
+              value={appointmentData.status}
+              onValueChange={(value: 'confirmado' | 'cancelado' | 'pendente') =>
                 onAppointmentDataChange({ ...appointmentData, status: value })
               }
             >
@@ -259,27 +232,6 @@ Até breve! 💚`;
                 <SelectItem value="cancelado" className="text-agenda-primary">Cancelado</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-        )}
-
-        {/* Botão WhatsApp - só mostra se tem dados suficientes */}
-        {clientData.client_phone && appointmentData.procedure_id && appointmentData.therapist_id && appointmentData.date && (
-          <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-            <h4 className="font-medium text-green-800 mb-2 flex items-center">
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Lembrete via WhatsApp
-            </h4>
-            <p className="text-sm text-green-700 mb-3">
-              Envie um lembrete automático para a cliente via WhatsApp
-            </p>
-            <Button
-              type="button"
-              onClick={() => window.open(generateWhatsAppLink(), '_blank')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
-            >
-              <MessageCircle className="w-4 h-4 mr-2" />
-              Enviar Lembrete via WhatsApp
-            </Button>
           </div>
         )}
 
