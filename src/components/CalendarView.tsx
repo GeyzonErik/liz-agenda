@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ViewMode, Appointment, CalendarDay } from '@/types/appointment';
 import { AppointmentCard } from './AppointmentCard';
@@ -167,7 +166,8 @@ export const CalendarView = ({
     const endTime = new Date(appointment.end_time);
     const durationMinutes = (endTime.getTime() - startTime.getTime()) / (1000 * 60);
     const slotsSpanned = Math.max(1, durationMinutes / 30);
-    return `${slotsSpanned * 4}rem`;
+    // Reduzir ligeiramente a altura para evitar sobreposição
+    return `calc(${slotsSpanned * 4}rem - 4px)`;
   };
 
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
@@ -190,19 +190,16 @@ export const CalendarView = ({
           {days.map((day, index) => (
             <div
               key={index}
-              className={`min-h-20 sm:min-h-32 p-1 sm:p-2 border-r border-b border-gray-100 ${
-                !day.isCurrentMonth ? 'bg-gray-50' : ''
-              }`}
+              className={`min-h-20 sm:min-h-32 p-1 sm:p-2 border-r border-b border-gray-100 ${!day.isCurrentMonth ? 'bg-gray-50' : ''
+                }`}
               onDrop={(e) => handleDrop(e, day.date)}
               onDragOver={handleDragOver}
             >
-              <div className={`text-xs sm:text-sm mb-1 sm:mb-2 ${
-                day.isCurrentMonth ? 'text-agenda-primary' : 'text-gray-400'
-              } ${
-                day.date.toDateString() === new Date().toDateString()
+              <div className={`text-xs sm:text-sm mb-1 sm:mb-2 ${day.isCurrentMonth ? 'text-agenda-primary' : 'text-gray-400'
+                } ${day.date.toDateString() === new Date().toDateString()
                   ? 'font-bold'
                   : ''
-              }`}>
+                }`}>
                 {day.date.getDate()}
               </div>
 
@@ -210,11 +207,10 @@ export const CalendarView = ({
                 {day.appointments.slice(0, 2).map(appointment => (
                   <div
                     key={appointment.id}
-                    className={`text-xs p-1 rounded text-white cursor-pointer truncate ${
-                      appointment.status === 'confirmado' ? 'bg-agenda-confirmed' :
+                    className={`text-xs p-1 rounded text-white cursor-pointer truncate ${appointment.status === 'confirmado' ? 'bg-agenda-confirmed' :
                       appointment.status === 'pendente' ? 'bg-agenda-primary' :
-                      'bg-agenda-cancelled'
-                    }`}
+                        'bg-agenda-cancelled'
+                      }`}
                     onClick={() => onAppointmentClick(appointment)}
                     draggable
                     onDragStart={() => handleDragStart(appointment)}
@@ -247,11 +243,10 @@ export const CalendarView = ({
           {days.map((day, index) => (
             <div key={index} className="p-2 sm:p-4 text-center border-r border-gray-200 last:border-r-0 bg-gray-50">
               <div className="text-xs sm:text-sm text-agenda-primary">{weekDays[index]}</div>
-              <div className={`text-sm sm:text-lg font-semibold mt-1 ${
-                day.date.toDateString() === new Date().toDateString()
-                  ? 'text-agenda-primary font-bold'
-                  : 'text-agenda-primary'
-              }`}>
+              <div className={`text-sm sm:text-lg font-semibold mt-1 ${day.date.toDateString() === new Date().toDateString()
+                ? 'text-red-500 font-bold'
+                : 'text-agenda-primary'
+                }`}>
                 {day.date.getDate()}
               </div>
             </div>
@@ -260,7 +255,7 @@ export const CalendarView = ({
 
         <div className="flex-1 overflow-y-auto">
           {timeSlots.map(timeSlot => (
-            <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
+            <div key={timeSlot} className="grid grid-cols-8 border-b border-gray-100 relative" style={{ minHeight: '4rem' }}>
               <div className="p-1 sm:p-2 text-xs text-agenda-primary bg-gray-50 border-r border-gray-200 flex items-center justify-center">
                 {timeSlot}
               </div>
@@ -314,7 +309,7 @@ export const CalendarView = ({
 
       <div className="flex-1 overflow-y-auto">
         {timeSlots.map(timeSlot => (
-          <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 relative" style={{ minHeight: '3rem' }}>
+          <div key={timeSlot} className="grid grid-cols-4 border-b border-gray-100 relative" style={{ minHeight: '4rem' }}>
             <div className="p-2 text-xs sm:text-sm text-agenda-primary bg-gray-50 border-r border-gray-200 flex items-center justify-center">
               {timeSlot}
             </div>
@@ -329,7 +324,7 @@ export const CalendarView = ({
                   className="absolute inset-x-2 z-10"
                   style={{
                     height: calculateCardHeight(appointment),
-                    top: '0.5rem'
+                    top: '0.25rem'
                   }}
                 >
                   <AppointmentCard

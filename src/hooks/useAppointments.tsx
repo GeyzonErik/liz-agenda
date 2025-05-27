@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Appointment } from '@/types/appointment';
@@ -11,13 +10,11 @@ export const useAppointments = () => {
 
   const fetchAppointments = async () => {
     if (!user) {
-      console.log('No user found, skipping appointments fetch');
       setLoading(false);
       return;
     }
 
     try {
-      console.log('Fetching appointments for user:', user.id);
       const { data, error } = await supabase
         .from('appointments')
         .select(`
@@ -31,7 +28,6 @@ export const useAppointments = () => {
         return;
       }
 
-      console.log('Raw appointments data:', data);
 
       const formattedAppointments: Appointment[] = data.map(apt => ({
         id: apt.id,
@@ -46,7 +42,6 @@ export const useAppointments = () => {
         procedure_id: apt.procedure_id
       }));
 
-      console.log('Formatted appointments:', formattedAppointments);
       setAppointments(formattedAppointments);
     } catch (error) {
       console.error('Error in fetchAppointments:', error);
@@ -62,7 +57,6 @@ export const useAppointments = () => {
     }
 
     try {
-      console.log('Creating appointment with data:', appointmentData);
       
       const { data, error } = await supabase
         .from('appointments')
@@ -84,7 +78,6 @@ export const useAppointments = () => {
         throw error;
       }
 
-      console.log('Appointment created successfully:', data);
       await fetchAppointments();
     } catch (error) {
       console.error('Error in createAppointment:', error);
@@ -92,13 +85,23 @@ export const useAppointments = () => {
     }
   };
 
-  const updateAppointment = async (id: string, updates: Partial<Appointment>) => {
+  const updateAppointment = async (id: string, updates: Partial<Appointment> & { therapist_id?: string }) => {
     try {
-      console.log('Updating appointment:', id, updates);
       
+      const updateData = {
+        client_name: updates.client_name,
+        client_phone: updates.client_phone,
+        therapist_id: updates.therapist_id,
+        start_time: updates.start_time,
+        end_time: updates.end_time,
+        status: updates.status,
+        notes: updates.notes,
+        procedure_id: updates.procedure_id
+      };
+
       const { error } = await supabase
         .from('appointments')
-        .update(updates)
+        .update(updateData)
         .eq('id', id);
 
       if (error) {
@@ -106,7 +109,6 @@ export const useAppointments = () => {
         throw error;
       }
 
-      console.log('Appointment updated successfully');
       await fetchAppointments();
     } catch (error) {
       console.error('Error in updateAppointment:', error);
@@ -116,7 +118,6 @@ export const useAppointments = () => {
 
   const deleteAppointment = async (id: string) => {
     try {
-      console.log('Deleting appointment:', id);
       
       const { error } = await supabase
         .from('appointments')
@@ -128,7 +129,6 @@ export const useAppointments = () => {
         throw error;
       }
 
-      console.log('Appointment deleted successfully');
       await fetchAppointments();
     } catch (error) {
       console.error('Error in deleteAppointment:', error);
@@ -137,7 +137,6 @@ export const useAppointments = () => {
   };
 
   useEffect(() => {
-    console.log('useAppointments effect triggered, user:', user?.id);
     fetchAppointments();
   }, [user]);
 
