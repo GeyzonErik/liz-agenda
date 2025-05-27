@@ -1,10 +1,12 @@
 
-import { Calendar, ChevronLeft, ChevronRight, User, LogOut, Menu, X, Flower2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ViewMode } from '@/types/appointment';
+import { addDays, addMonths, addWeeks, format, subDays, subMonths, subWeeks } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useInternalAuth } from '@/hooks/useInternalAuth';
-import { useState } from 'react';
+import { MobileMenu } from './MobileMenu';
 
 interface HeaderProps {
   currentDate: Date;
@@ -12,7 +14,7 @@ interface HeaderProps {
   onDateChange: (date: Date) => void;
   onViewModeChange: (mode: ViewMode) => void;
   onCreateAppointment: () => void;
-  userName?: string;
+  userName: string;
 }
 
 export const Header = ({
@@ -20,228 +22,221 @@ export const Header = ({
   viewMode,
   onDateChange,
   onViewModeChange,
-  userName = "Usuário"
+  onCreateAppointment,
+  userName
 }: HeaderProps) => {
   const { signOut } = useAuth();
   const { logout } = useInternalAuth();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const formatDate = () => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'long',
-      ...(viewMode === 'day' && { day: 'numeric' })
-    };
-    return currentDate.toLocaleDateString('pt-BR', options);
+  const handleLogout = async () => {
+    logout();
+    await signOut();
   };
 
   const navigateDate = (direction: 'prev' | 'next') => {
-    const newDate = new Date(currentDate);
+    let newDate: Date;
     
-    switch (viewMode) {
-      case 'day':
-        newDate.setDate(newDate.getDate() + (direction === 'next' ? 1 : -1));
-        break;
-      case 'week':
-        newDate.setDate(newDate.getDate() + (direction === 'next' ? 7 : -7));
-        break;
-      case 'month':
-        newDate.setMonth(newDate.getMonth() + (direction === 'next' ? 1 : -1));
-        break;
+    if (direction === 'prev') {
+      switch (viewMode) {
+        case 'day':
+          newDate = subDays(currentDate, 1);
+          break;
+        case 'week':
+          newDate = subWeeks(currentDate, 1);
+          break;
+        case 'month':
+          newDate = subMonths(currentDate, 1);
+          break;
+        default:
+          newDate = currentDate;
+      }
+    } else {
+      switch (viewMode) {
+        case 'day':
+          newDate = addDays(currentDate, 1);
+          break;
+        case 'week':
+          newDate = addWeeks(currentDate, 1);
+          break;
+        case 'month':
+          newDate = addMonths(currentDate, 1);
+          break;
+        default:
+          newDate = currentDate;
+      }
     }
     
     onDateChange(newDate);
   };
 
-  const handleLogout = () => {
-    logout();
-    signOut();
+  const formatDateDisplay = () => {
+    switch (viewMode) {
+      case 'day':
+        return format(currentDate, "EEEE, d 'de' MMMM 'de' yyyy", { locale: ptBR });
+      case 'week':
+        const weekStart = new Date(currentDate);
+        weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        return `${format(weekStart, 'd MMM', { locale: ptBR })} - ${format(weekEnd, 'd MMM yyyy', { locale: ptBR })}`;
+      case 'month':
+        return format(currentDate, "MMMM 'de' yyyy", { locale: ptBR });
+      default:
+        return '';
+    }
   };
 
   return (
-    <>
-      {/* Desktop Header */}
-      <header className="desktop-header bg-white border-b border-gray-200 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-agenda-primary rounded-lg flex items-center justify-center">
-                <Flower2 className="w-5 h-5 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-agenda-primary">
-                Agenda-Liz
+    <header className="bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo e Menu Mobile */}
+          <div className="flex items-center space-x-4">
+            <MobileMenu />
+            <div className="flex items-center space-x-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-agenda-primary">
+                Agenda-Liz 🌸
               </h1>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
+              
+              {/* View Mode Buttons - Desktop */}
+              <div className="hidden md:flex items-center space-x-2">
                 <Button
-                  variant="outline"
+                  variant={viewMode === 'day' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => navigateDate('prev')}
-                  className="hover:bg-agenda-accent border-agenda-primary/20 text-agenda-primary"
+                  onClick={() => onViewModeChange('day')}
+                  className={viewMode === 'day' 
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                    : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+                  }
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  Dia
                 </Button>
-                
-                <div className="min-w-48 text-center">
-                  <h2 className="text-lg font-semibold text-agenda-primary capitalize">
-                    {formatDate()}
-                  </h2>
-                </div>
-                
                 <Button
-                  variant="outline"
+                  variant={viewMode === 'week' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => navigateDate('next')}
-                  className="hover:bg-agenda-accent border-agenda-primary/20 text-agenda-primary"
+                  onClick={() => onViewModeChange('week')}
+                  className={viewMode === 'week' 
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                    : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+                  }
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  Semana
                 </Button>
-              </div>
-
-              {/* View Mode Buttons */}
-              <div className="flex rounded-lg border border-agenda-primary/20 overflow-hidden">
-                {(['day', 'week', 'month'] as const).map((mode) => (
-                  <Button
-                    key={mode}
-                    variant={viewMode === mode ? "default" : "ghost"}
-                    size="sm"
-                    onClick={() => onViewModeChange(mode)}
-                    className={`rounded-none border-0 px-4 ${
-                      viewMode === mode 
-                        ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
-                        : 'hover:bg-agenda-accent text-agenda-primary'
-                    }`}
-                  >
-                    {mode === 'day' && 'Dia'}
-                    {mode === 'week' && 'Semana'}
-                    {mode === 'month' && 'Mês'}
-                  </Button>
-                ))}
-              </div>
-
-              {/* User Info */}
-              <div className="flex items-center space-x-4 text-sm text-agenda-primary border-l border-gray-200 pl-4">
-                <div className="flex items-center space-x-2">
-                  <User className="w-4 h-4" />
-                  <span>{userName}</span>
-                </div>
                 <Button
-                  variant="ghost"
+                  variant={viewMode === 'month' ? 'default' : 'outline'}
                   size="sm"
-                  onClick={handleLogout}
-                  className="text-agenda-primary hover:text-agenda-secondary hover:bg-agenda-accent"
+                  onClick={() => onViewModeChange('month')}
+                  className={viewMode === 'month' 
+                    ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+                    : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+                  }
                 >
-                  <LogOut className="w-4 h-4" />
+                  Mês
                 </Button>
               </div>
             </div>
           </div>
-        </div>
-      </header>
 
-      {/* Mobile Header */}
-      <header className="mobile-header bg-white border-b border-gray-200 shadow-sm">
-        <div className="px-4 py-3">
-          <div className="flex items-center justify-between mb-3">
-            {/* Logo Mobile */}
+          {/* Navigation Controls */}
+          <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="flex items-center space-x-2">
-              <div className="w-7 h-7 bg-agenda-primary rounded-lg flex items-center justify-center">
-                <Flower2 className="w-4 h-4 text-white" />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateDate('prev')}
+                className="border-agenda-primary text-agenda-primary hover:bg-agenda-accent"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              
+              <div className="hidden sm:block min-w-0">
+                <h2 className="text-sm sm:text-lg font-semibold text-agenda-primary text-center whitespace-nowrap">
+                  {formatDateDisplay()}
+                </h2>
               </div>
-              <h1 className="text-xl font-bold text-agenda-primary">
-                Agenda-Liz
-              </h1>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigateDate('next')}
+                className="border-agenda-primary text-agenda-primary hover:bg-agenda-accent"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
 
-            {/* Menu Button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-agenda-primary hover:bg-agenda-accent"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </Button>
-          </div>
-
-          {/* Date Navigation Mobile */}
-          <div className="flex items-center justify-center space-x-2 mb-3">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateDate('prev')}
-              className="p-2 border-agenda-primary/20 text-agenda-primary hover:bg-agenda-accent"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
-            
-            <div className="flex-1 text-center">
-              <h2 className="text-base font-semibold text-agenda-primary capitalize">
-                {formatDate()}
-              </h2>
-            </div>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigateDate('next')}
-              className="p-2 border-agenda-primary/20 text-agenda-primary hover:bg-agenda-accent"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="border-t border-gray-200 pt-3 space-y-3">
-              {/* View Mode Buttons Mobile */}
-              <div className="mobile-nav">
-                {(['day', 'week', 'month'] as const).map((mode) => (
-                  <Button
-                    key={mode}
-                    variant={viewMode === mode ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => {
-                      onViewModeChange(mode);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`mobile-nav-button ${
-                      viewMode === mode 
-                        ? 'bg-agenda-primary text-white' 
-                        : 'text-agenda-primary border-agenda-primary/20 hover:bg-agenda-accent'
-                    }`}
-                  >
-                    {mode === 'day' && 'Dia'}
-                    {mode === 'week' && 'Semana'}
-                    {mode === 'month' && 'Mês'}
-                  </Button>
-                ))}
-              </div>
-
-              {/* User Info Mobile */}
-              <div className="flex items-center justify-between text-sm text-agenda-primary border-t border-gray-200 pt-3">
-                <div className="flex items-center space-x-2">
-                  <User className="w-4 h-4" />
-                  <span>{userName}</span>
-                </div>
+            {/* Action Buttons */}
+            <div className="flex items-center space-x-2">
+              <Button
+                onClick={onCreateAppointment}
+                size="sm"
+                className="hidden sm:flex bg-agenda-primary hover:bg-agenda-primary/90 text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Novo
+              </Button>
+              
+              <div className="hidden md:flex items-center space-x-2">
+                <span className="text-sm text-agenda-primary">
+                  {userName}
+                </span>
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-agenda-primary hover:text-agenda-secondary hover:bg-agenda-accent"
+                  className="border-agenda-primary text-agenda-primary hover:bg-agenda-accent"
                 >
-                  <LogOut className="w-4 h-4" />
                   Sair
                 </Button>
               </div>
             </div>
-          )}
+          </div>
         </div>
-      </header>
-    </>
+
+        {/* View Mode Buttons - Mobile */}
+        <div className="flex md:hidden items-center justify-center space-x-2 pb-3">
+          <Button
+            variant={viewMode === 'day' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onViewModeChange('day')}
+            className={viewMode === 'day' 
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+              : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+            }
+          >
+            Dia
+          </Button>
+          <Button
+            variant={viewMode === 'week' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onViewModeChange('week')}
+            className={viewMode === 'week' 
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+              : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+            }
+          >
+            Semana
+          </Button>
+          <Button
+            variant={viewMode === 'month' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onViewModeChange('month')}
+            className={viewMode === 'month' 
+              ? 'bg-agenda-primary text-white hover:bg-agenda-primary/90' 
+              : 'border-agenda-primary text-agenda-primary hover:bg-agenda-accent'
+            }
+          >
+            Mês
+          </Button>
+        </div>
+
+        {/* Date Display - Mobile */}
+        <div className="block sm:hidden text-center pb-3">
+          <h2 className="text-lg font-semibold text-agenda-primary">
+            {formatDateDisplay()}
+          </h2>
+        </div>
+      </div>
+    </header>
   );
 };
