@@ -136,7 +136,7 @@
   }
 
   /* Correção do menu lateral - garantir que fique completamente oculto */
-  .group\\/sidebar-wrapper[data-state="collapsed"] .sidebar {
+  [data-state="collapsed"] .sidebar {
     transform: translateX(-100%) !important;
   }
 
