@@ -1,4 +1,3 @@
-
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Flower2 } from 'lucide-react';
