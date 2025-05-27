@@ -44,38 +44,38 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
 
   return (
     <div
-      className={`appointment-card ${getStatusStyle(appointment.status)} ${isDragging ? 'opacity-50' : ''} animate-fade-in relative h-full cursor-pointer overflow-hidden`}
+      className={`appointment-card ${getStatusStyle(appointment.status)} ${isDragging ? 'opacity-50' : ''} animate-fade-in h-full cursor-pointer overflow-hidden`}
       onClick={() => onClick(appointment)}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('appointment', JSON.stringify(appointment));
       }}
     >
-      <div className="flex flex-col h-full">
-        {/* Badge de status posicionado no topo direito */}
-        <div className={`absolute top-2 right-2 px-2 py-1 rounded-full text-xs font-medium z-10 ${getStatusBadgeStyle(appointment.status)}`}>
-          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
-        </div>
-        
-        {/* Header com nome do cliente */}
-        <div className="flex items-start space-x-2 mb-2 pr-20">
+      <div className="flex flex-col h-full relative">
+        {/* Header com nome do cliente - sem padding right excessivo */}
+        <div className="flex items-start space-x-2 mb-2">
           <User className="w-3 h-3 flex-shrink-0 text-agenda-primary mt-0.5" />
-          <p className={`text-sm font-medium text-agenda-primary ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+          <p className={`client-name text-sm font-medium text-agenda-primary flex-1 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
             {appointment.client_name}
           </p>
         </div>
         
         {/* Profissional */}
-        <p className={`text-xs mb-2 truncate text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
+        <p className={`therapist-name text-xs mb-2 text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
           {appointment.therapist_name}
         </p>
         
         {/* Horário */}
-        <div className="flex items-center space-x-1 text-xs text-agenda-primary/70 mt-auto">
+        <div className="flex items-center space-x-1 text-xs text-agenda-primary/70 mt-auto mb-8 sm:mb-2">
           <Clock className="w-3 h-3 text-agenda-primary" />
-          <span className={appointment.status === 'cancelado' ? 'line-through' : ''}>
+          <span className={`time-display ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
             {formatTime(appointment.start_time)} - {formatTime(appointment.end_time)}
           </span>
+        </div>
+        
+        {/* Badge de status posicionado no bottom direito */}
+        <div className={`status-badge absolute bottom-2 right-2 sm:top-2 sm:bottom-auto px-2 py-1 rounded-full text-xs font-medium z-10 ${getStatusBadgeStyle(appointment.status)}`}>
+          {appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1)}
         </div>
       </div>
     </div>
