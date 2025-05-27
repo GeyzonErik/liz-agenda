@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { CalendarView } from '@/components/CalendarView';
@@ -38,21 +37,25 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Loading state
   if (authLoading) {
     return (
       <div className="min-h-screen bg-agenda-lightbg flex items-center justify-center">
-        <div className="text-agenda-primary">Carregando...</div>
+        <div className="text-agenda-primary text-lg">Carregando autenticação...</div>
       </div>
     );
   }
 
+  // Not logged in
   if (!user) {
     return <Login />;
   }
 
+  // Not internally authenticated
   if (!isInternallyAuthenticated) {
     return <InternalAuth />;
   }
+
 
   const handleCreateAppointment = () => {
     setSelectedAppointment(null);
@@ -69,6 +72,14 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
+  const handleDeleteAppointment = async () => {
+    if (selectedAppointment) {
+      await deleteAppointment(selectedAppointment.id);
+      setSelectedAppointment(null);
+      setIsViewModalOpen(false);
+    }
+  };
+
   const handleSaveAppointment = async (appointmentData: any) => {
     if (selectedAppointment) {
       // Update existing appointment
@@ -77,19 +88,13 @@ const Index = () => {
       // Create new appointment
       await createAppointment(appointmentData);
     }
-  };
-
-  const handleDeleteAppointment = async () => {
-    if (selectedAppointment) {
-      await deleteAppointment(selectedAppointment.id);
-    }
+    setIsModalOpen(false);
   };
 
   const handleStatusChange = async (status: 'confirmado' | 'cancelado' | 'pendente') => {
     if (selectedAppointment) {
       await updateAppointment(selectedAppointment.id, { status });
-      // Update local state to reflect the change immediately
-      setSelectedAppointment({ ...selectedAppointment, status });
+      setSelectedAppointment(prev => prev ? { ...prev, status } : null);
     }
   };
 
@@ -117,7 +122,7 @@ const Index = () => {
       <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-3 sm:py-6">
         {appointmentsLoading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="text-agenda-primary">Carregando agendamentos...</div>
+            <div className="text-agenda-primary text-lg">Carregando agendamentos...</div>
           </div>
         ) : (
           <CalendarView
@@ -181,6 +186,7 @@ const Index = () => {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSaveAppointment}
         appointment={selectedAppointment}
+        appointments={appointments}
       />
     </div>
   );

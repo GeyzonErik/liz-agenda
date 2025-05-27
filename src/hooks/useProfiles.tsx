@@ -9,11 +9,11 @@ interface Profile {
   avatar_url?: string;
 }
 
-export const useProfiles = () => {
-  const [profiles, setProfiles] = useState<Profile[]>([]);
+export const useProfessionals = () => {
+  const [professionals, setProfessionals] = useState<Profile[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfiles = async () => {
+  const fetchProfessionals = async () => {
     try {
       // Buscar da tabela professionals em vez de profiles
       const { data, error } = await supabase
@@ -34,7 +34,7 @@ export const useProfiles = () => {
         avatar_url: undefined
       })) || [];
 
-      setProfiles(mappedProfiles);
+      setProfessionals(mappedProfiles);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -43,8 +43,8 @@ export const useProfiles = () => {
   };
 
   useEffect(() => {
-    fetchProfiles();
+    fetchProfessionals();
   }, []);
 
-  return { profiles, loading, refetch: fetchProfiles };
+  return { professionals, loading, refetch: fetchProfessionals };
 };
