@@ -112,19 +112,19 @@
     @apply bg-red-50 border-l-agenda-cancelled hover:bg-red-100 text-agenda-primary;
   }
 
-  /* Correção das cores dos selects */
+  /* Correção das cores dos selects - usando azul petróleo */
   [data-radix-select-trigger] {
-    border-color: rgb(46 74 98 / 0.3) !important;
+    border-color: rgb(28 60 52 / 0.3) !important;
   }
   
   [data-radix-select-trigger]:focus {
-    border-color: rgb(46 74 98) !important;
-    box-shadow: 0 0 0 2px rgb(46 74 98 / 0.2) !important;
+    border-color: rgb(28 60 52) !important;
+    box-shadow: 0 0 0 2px rgb(28 60 52 / 0.2) !important;
   }
 
   [data-radix-select-content] {
     background-color: white !important;
-    border-color: rgb(46 74 98 / 0.2) !important;
+    border-color: rgb(28 60 52 / 0.2) !important;
   }
 
   [data-radix-select-item] {
@@ -135,10 +135,23 @@
     background-color: rgb(232 240 235) !important;
   }
 
-  /* Responsividade aprimorada */
+  /* Correção do menu lateral - garantir que fique completamente oculto */
+  [data-state="collapsed"] .sidebar {
+    transform: translateX(-100%) !important;
+  }
+
+  /* Melhorias para visualização semanal mobile */
   @media (max-width: 640px) {
     .appointment-card {
-      @apply p-2 text-sm;
+      @apply p-2 text-xs min-h-16;
+    }
+    
+    .appointment-card .absolute {
+      @apply top-1 right-1 px-1 py-0.5 text-xs;
+    }
+    
+    .appointment-card .pr-20 {
+      @apply pr-12;
     }
 
     .text-lg {
@@ -168,6 +181,23 @@
 
     .mobile-nav-button {
       @apply text-xs px-2 py-1;
+    }
+
+    /* Melhor visualização do calendário semanal no mobile */
+    .week-view {
+      @apply overflow-x-auto;
+    }
+    
+    .week-grid {
+      @apply min-w-full;
+    }
+    
+    .day-column {
+      @apply min-w-32;
+    }
+    
+    .time-slot {
+      @apply min-h-12 text-xs;
     }
   }
 
