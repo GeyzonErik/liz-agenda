@@ -19,7 +19,8 @@ export const useAppointments = () => {
         .from('appointments')
         .select(`
           *,
-          therapist:professionals!therapist_id(id, name)
+          therapist:professionals!therapist_id(id, name),
+          procedure:procedures!procedure_id(id, name)
         `)
         .order('start_time', { ascending: true });
 
@@ -27,7 +28,6 @@ export const useAppointments = () => {
         console.error('Error fetching appointments:', error);
         return;
       }
-
 
       const formattedAppointments: Appointment[] = data.map(apt => ({
         id: apt.id,
@@ -39,7 +39,8 @@ export const useAppointments = () => {
         status: apt.status as 'confirmado' | 'cancelado' | 'pendente',
         created_by: apt.created_by,
         notes: apt.notes,
-        procedure_id: apt.procedure_id
+        procedure_id: apt.procedure_id,
+        procedure_name: apt.procedure?.name || ''
       }));
 
       setAppointments(formattedAppointments);

@@ -1,4 +1,3 @@
-
 export interface Appointment {
   id: string;
   client_name: string;
@@ -10,6 +9,7 @@ export interface Appointment {
   created_by: string;
   notes?: string;
   procedure_id?: string;
+  procedure_name?: string;
 }
 
 export type ViewMode = 'day' | 'week' | 'month';

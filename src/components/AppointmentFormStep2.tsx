@@ -1,12 +1,16 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageCircle, Calendar as CalendarIcon } from 'lucide-react';
 import { useProfessionals } from '@/hooks/useProfiles';
 import { useProcedures } from '@/hooks/useProcedures';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface FormData {
   client_name: string;
@@ -166,13 +170,38 @@ export const AppointmentFormStep2 = ({
           <Label htmlFor="date" className="text-agenda-primary text-sm font-medium">
             Data *
           </Label>
-          <Input
-            id="date"
-            type="date"
-            value={appointmentData.date}
-            onChange={(e) => onAppointmentDataChange({ ...appointmentData, date: e.target.value })}
-            className={`mt-1 text-agenda-primary ${errors.date ? 'border-red-500' : ''}`}
-          />
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'w-full mt-1 justify-start text-left font-normal',
+                  !appointmentData.date && 'text-muted-foreground',
+                  errors.date && 'border-red-500'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {appointmentData.date ? (
+                  format(new Date(appointmentData.date), 'PPP', { locale: ptBR })
+                ) : (
+                  <span>Selecione uma data</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={appointmentData.date ? new Date(appointmentData.date + 'T00:00:00') : undefined}
+                onSelect={(date) => onAppointmentDataChange({
+                  ...appointmentData,
+                  date: date ? date.toISOString().split('T')[0] : ''
+                })}
+                initialFocus
+                locale={ptBR}
+                className="text-agenda-primary"
+              />
+            </PopoverContent>
+          </Popover>
           {errors.date && (
             <p className="text-red-500 text-xs mt-1">{errors.date}</p>
           )}

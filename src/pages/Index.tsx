@@ -57,8 +57,26 @@ const Index = () => {
   }
 
 
-  const handleCreateAppointment = () => {
-    setSelectedAppointment(null);
+  const handleCreateAppointment = (date?: Date, startTime?: string) => {
+    if (date && startTime) {
+      // Calculate end time (1 hour after start time)
+      const [hours, minutes] = startTime.split(':').map(Number);
+      const startDate = new Date(date);
+      startDate.setHours(hours, minutes, 0, 0);
+      const endDate = new Date(startDate.getTime() + 60 * 60 * 1000); // Add 1 hour
+
+      setSelectedAppointment({
+        id: '',
+        client_name: '',
+        therapist_name: '',
+        created_by: '',
+        status: 'pendente',
+        start_time: startDate.toISOString(),
+        end_time: endDate.toISOString()
+      });
+    } else {
+      setSelectedAppointment(null);
+    }
     setIsModalOpen(true);
   };
 
@@ -115,7 +133,7 @@ const Index = () => {
         viewMode={viewMode}
         onDateChange={setCurrentDate}
         onViewModeChange={setViewMode}
-        onCreateAppointment={handleCreateAppointment}
+        onCreateAppointment={() => handleCreateAppointment()}
         userName={user?.user_metadata?.full_name || user?.email || "Usuário"}
       />
 
@@ -131,6 +149,7 @@ const Index = () => {
             appointments={appointments}
             onAppointmentClick={handleAppointmentClick}
             onAppointmentMove={handleAppointmentMove}
+            onCreateAppointmentClick={handleCreateAppointment}
           />
         )}
       </main>
@@ -140,7 +159,7 @@ const Index = () => {
         showFab ? 'translate-y-0 opacity-100' : 'translate-y-16 opacity-0'
       }`}>
         <Button
-          onClick={handleCreateAppointment}
+          onClick={() => handleCreateAppointment()}
           className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-r from-agenda-primary to-agenda-secondary hover:from-agenda-primary/90 hover:to-agenda-secondary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
         >
           <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -158,7 +177,7 @@ const Index = () => {
               Comece criando seu primeiro agendamento para organizar as sessões do centro terapêutico.
             </p>
             <Button
-              onClick={handleCreateAppointment}
+              onClick={() => handleCreateAppointment()}
               className="bg-agenda-primary hover:bg-agenda-primary/90 text-white text-sm sm:text-base"
             >
               <Plus className="w-4 h-4 mr-2" />

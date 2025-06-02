@@ -8,6 +8,7 @@ interface CalendarViewProps {
   appointments: Appointment[];
   onAppointmentClick: (appointment: Appointment) => void;
   onAppointmentMove?: (appointmentId: string, newDate: Date, newStartTime: string, newEndTime: string) => void;
+  onCreateAppointmentClick?: (date: Date, startTime: string) => void;
 }
 
 export const CalendarView = ({
@@ -15,7 +16,8 @@ export const CalendarView = ({
   currentDate,
   appointments,
   onAppointmentClick,
-  onAppointmentMove
+  onAppointmentMove,
+  onCreateAppointmentClick
 }: CalendarViewProps) => {
   const [draggedAppointment, setDraggedAppointment] = useState<Appointment | null>(null);
 
@@ -146,7 +148,7 @@ export const CalendarView = ({
 
   const generateTimeSlots = () => {
     const slots = [];
-    for (let hour = 7; hour <= 20; hour++) {
+    for (let hour = 0; hour <= 23; hour++) {
       slots.push(`${hour.toString().padStart(2, '0')}:00`);
       slots.push(`${hour.toString().padStart(2, '0')}:30`);
     }
@@ -170,6 +172,12 @@ export const CalendarView = ({
     return `calc(${slotsSpanned * 4}rem - 4px)`;
   };
 
+  const handleSlotClick = (date: Date, timeSlot?: string) => {
+    if (onCreateAppointmentClick && timeSlot) {
+      onCreateAppointmentClick(date, timeSlot);
+    }
+  };
+
   const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   const timeSlots = generateTimeSlots();
 
@@ -190,14 +198,15 @@ export const CalendarView = ({
           {days.map((day, index) => (
             <div
               key={index}
-              className={`min-h-20 sm:min-h-32 p-1 sm:p-2 border-r border-b border-gray-100 ${!day.isCurrentMonth ? 'bg-gray-50' : ''
+              className={`min-h-20 sm:min-h-32 p-1 sm:p-2 border-r border-b border-gray-100 ${!day.isCurrentMonth ? 'bg-gray-50' : 'hover:bg-gray-50 cursor-pointer'
                 }`}
               onDrop={(e) => handleDrop(e, day.date)}
               onDragOver={handleDragOver}
+              onClick={() => handleSlotClick(day.date, '09:00')}
             >
               <div className={`text-xs sm:text-sm mb-1 sm:mb-2 ${day.isCurrentMonth ? 'text-agenda-primary' : 'text-gray-400'
                 } ${day.date.toDateString() === new Date().toDateString()
-                  ? 'font-bold'
+                  ? 'text-red-500 font-bold'
                   : ''
                 }`}>
                 {day.date.getDate()}
@@ -211,9 +220,15 @@ export const CalendarView = ({
                       appointment.status === 'pendente' ? 'bg-agenda-primary' :
                         'bg-agenda-cancelled'
                       }`}
-                    onClick={() => onAppointmentClick(appointment)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAppointmentClick(appointment);
+                    }}
                     draggable
-                    onDragStart={() => handleDragStart(appointment)}
+                    onDragStart={(e) => {
+                      e.stopPropagation();
+                      handleDragStart(appointment);
+                    }}
                   >
                     {appointment.client_name}
                   </div>
@@ -262,9 +277,10 @@ export const CalendarView = ({
               {days.map((day, dayIndex) => (
                 <div
                   key={`${timeSlot}-${dayIndex}`}
-                  className="p-1 border-r border-gray-100 last:border-r-0 relative"
+                  className="p-1 border-r border-gray-100 last:border-r-0 relative hover:bg-gray-50 cursor-pointer"
                   onDrop={(e) => handleDrop(e, day.date, timeSlot)}
                   onDragOver={handleDragOver}
+                  onClick={() => handleSlotClick(day.date, timeSlot)}
                 >
                   {getAppointmentsByTimeSlot(day.appointments, timeSlot).map(appointment => (
                     <div
@@ -273,6 +289,10 @@ export const CalendarView = ({
                       style={{
                         height: calculateCardHeight(appointment),
                         top: '0.25rem'
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onAppointmentClick(appointment);
                       }}
                     >
                       <AppointmentCard
@@ -314,9 +334,10 @@ export const CalendarView = ({
               {timeSlot}
             </div>
             <div
-              className="col-span-3 p-2 relative"
+              className="col-span-3 p-2 relative hover:bg-gray-50 cursor-pointer"
               onDrop={(e) => handleDrop(e, currentDate, timeSlot)}
               onDragOver={handleDragOver}
+              onClick={() => handleSlotClick(currentDate, timeSlot)}
             >
               {getAppointmentsByTimeSlot(dayAppointments, timeSlot).map(appointment => (
                 <div
@@ -325,6 +346,10 @@ export const CalendarView = ({
                   style={{
                     height: calculateCardHeight(appointment),
                     top: '0.25rem'
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onAppointmentClick(appointment);
                   }}
                 >
                   <AppointmentCard
