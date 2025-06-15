@@ -115,7 +115,7 @@ export const AppointmentModal = ({
     }
 
     onSave({
-      ...(appointment ? appointment : {}), // Only preserve existing data if editing
+      ...appointment, // Preserve existing appointment data
       client_name: clientData.client_name,
       client_phone: clientData.client_phone,
       notes: clientData.notes,

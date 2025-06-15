@@ -46,11 +46,6 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
     return status === 'confirmado' || status === 'cancelado';
   };
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
-  };
-
   return (
     <div
       className={`appointment-card ${getStatusStyle(appointment.status)} ${isDragging ? 'opacity-50' : ''} animate-fade-in h-full cursor-pointer overflow-hidden`}
@@ -78,20 +73,6 @@ export const AppointmentCard = ({ appointment, onClick, isDragging = false }: Ap
         <p className={`therapist-name text-xs text-agenda-primary/80 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
           {appointment.therapist_name}
         </p>
-
-        {/* Procedimento */}
-        {appointment.procedure_name && (
-          <p className={`text-xs text-agenda-primary/70 mt-1 ${appointment.status === 'cancelado' ? 'line-through' : ''}`}>
-            {appointment.procedure_name}
-          </p>
-        )}
-
-        {/* Notas (truncadas) */}
-        {appointment.notes && (
-          <p className="text-xs text-agenda-primary/60 mt-1 italic">
-            {truncateText(appointment.notes, 30)}
-          </p>
-        )}
         
         {/* Horário */}
         <div className="flex items-center space-x-1 text-xs text-agenda-primary/70 mt-auto">
